@@ -18,6 +18,10 @@ export function DashboardSidebar({ profile }: { profile: Profile | null }) {
   const router = useRouter()
   const supabase = createClient()
 
+  // Скрываем на страницах уроков — там своя боковая панель
+  const isLessonPage = path.startsWith('/lesson/')
+  if (isLessonPage) return null
+
   async function handleLogout() {
     await supabase.auth.signOut()
     router.push('/')

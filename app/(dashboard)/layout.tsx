@@ -1,5 +1,4 @@
 // @ts-nocheck
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar'
@@ -14,8 +13,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-screen bg-night">
-      <DashboardSidebar profile={profile as any} />
-      <main className="flex-1 ml-[260px] min-h-screen">
+      <DashboardSidebar profile={profile} />
+      {/* На уроках sidebar скрыт — убираем отступ через CSS-переменную */}
+      <main className="flex-1 min-h-screen dashboard-main">
         {children}
       </main>
     </div>

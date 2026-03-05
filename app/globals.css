@@ -60,3 +60,7 @@
   .badge-sg  { @apply bg-teal/10 text-tealb text-xs font-bold px-2 py-0.5 rounded-full; }
   .badge-pl  { @apply text-[#b070f8] text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(150,80,220,.12); }
 }
+
+/* Dashboard: отступ под сайдбар, кроме страниц уроков */
+.dashboard-main { margin-left: 260px; }
+[data-lesson-page] .dashboard-main { margin-left: 0; }
