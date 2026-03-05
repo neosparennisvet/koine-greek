@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: rgba(212, 168, 67, 0.25);
+    color: #f0c96a;
+  }
+
+  ::-webkit-scrollbar       { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a3045; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4a5270; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  /* Greek serif shorthand */
+  .font-greek {
+    font-family: var(--font-cormorant), Georgia, serif;
+  }
+
+  /* Glow utilities */
+  .glow-gold { box-shadow: 0 0 40px rgba(212,168,67,.2); }
+  .glow-teal { box-shadow: 0 0 40px rgba(58,158,143,.2); }
+
+  /* Gradient borders */
+  .border-gradient-gold {
+    border-image: linear-gradient(90deg, transparent, #d4a843, transparent) 1;
+  }
+}
+
+@layer components {
+  /* Fade-in on scroll */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Greek anatomy colors */
+  .greek-stem    { color: #7c8ef8; }
+  .greek-ending  { color: #d4a843; }
+
+  /* Badge variants */
+  .badge-nom { @apply bg-indigo/15 text-indigol text-xs font-bold px-2 py-0.5 rounded-full; }
+  .badge-acc { @apply bg-gold/15 text-gold text-xs font-bold px-2 py-0.5 rounded-full; }
+  .badge-gen { @apply bg-rose/15 text-rose text-xs font-bold px-2 py-0.5 rounded-full; }
+  .badge-dat { @apply bg-teal/15 text-tealb text-xs font-bold px-2 py-0.5 rounded-full; }
+  .badge-sg  { @apply bg-teal/10 text-tealb text-xs font-bold px-2 py-0.5 rounded-full; }
+  .badge-pl  { @apply text-[#b070f8] text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(150,80,220,.12); }
+}
