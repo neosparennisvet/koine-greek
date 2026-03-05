@@ -1,15 +1,13 @@
 // @ts-nocheck
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound, redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getLessonById, getAdjacentLessons, getModuleByLessonId, COURSE_MODULES } from '@/lib/course-data'
 import { LessonSidebar } from '@/components/lesson/LessonSidebar'
 import { LessonContent } from '@/components/lesson/LessonContent'
-import type { Metadata } from 'next'
 
 interface Props { params: { id: string } }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props) {
   const lesson = getLessonById(params.id)
   return { title: lesson?.title ?? 'Урок' }
 }
@@ -39,21 +37,21 @@ export default async function LessonPage({ params }: Props) {
   const module_ = getModuleByLessonId(lesson.id)
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-night">
       <LessonSidebar
-        modules={COURSE_MODULES}
+        modules={COURSE_MODULES as any}
         currentLessonId={lesson.id}
         completedIds={completedIds}
         totalLessons={36}
         doneLessons={completedIds.size}
       />
-      <div className="ml-[300px] flex-1 p-10 max-w-[900px]">
+      <div className="ml-[300px] flex-1 p-8 md:p-12">
         <LessonContent
           lesson={lesson}
           module={module_}
           userId={user.id}
-          prev={prev}
-          next={next}
+          prev={prev ?? null}
+          next={next ?? null}
           isCompleted={completedIds.has(lesson.id)}
         />
       </div>

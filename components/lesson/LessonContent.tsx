@@ -1,50 +1,341 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import type { CourseLesson, CourseModule } from '@/types'
+import type { Lesson, Module, LessonSection, Exercise, VocabWord } from '@/lib/course-data'
 
-// Demo content for lesson 2-2
-const DEMO_MORPH = [
-  { form: 'ἄνθρωπον', case_: 'Вин.п.', number: 'ед.ч.', gender: 'муж.', lexical: 'ἄνθρωπος', meaning: 'человека' },
-  { form: 'ὧραι',     case_: 'Им.п.',  number: 'мн.ч.', gender: 'жен.', lexical: 'ὥρα',      meaning: 'часы' },
-  { form: 'τήν',      case_: 'Вин.п.', number: 'ед.ч.', gender: 'жен.', lexical: 'ὁ/ἡ/τό',  meaning: 'артикль' },
-  { form: 'λόγους',   case_: 'Вин.п.', number: 'мн.ч.', gender: 'муж.', lexical: 'λόγος',    meaning: 'слова' },
-  { form: 'θεοί',     case_: 'Им.п.',  number: 'мн.ч.', gender: 'муж.', lexical: 'θεός',     meaning: 'боги' },
-]
-const DEMO_TRANS = [
-  { greek: 'αὐτοὶ τὸν θεὸν ὄψονται.', hint: '(они увидят)', answer: 'Они увидят Бога. (Мф. 5:8)' },
-  { greek: 'Διώκετε τὴν ἀγάπην.',     hint: '(достигайте)', answer: 'Достигайте любви. (1 Кор. 14:1)' },
-  { greek: 'ἐραυνᾶτε τὰς γραφάς.',    hint: '(исследуйте)', answer: 'Исследуйте Писания. (Ин. 5:39)' },
-  { greek: 'πεπλήρωται ὁ καιρός.',    hint: '(исполнилось)', answer: 'Исполнилось время. (Мк. 1:15)' },
-]
+// ─── Секция: Введение ─────────────────────────────────────────
+function SectionIntro({ content }: { content: string }) {
+  return (
+    <div className="p-6 rounded-2xl bg-gradient-to-br from-gold/8 to-transparent border border-gold/20 mb-8">
+      <div className="text-soft leading-relaxed text-base whitespace-pre-line">{content}</div>
+    </div>
+  )
+}
 
+// ─── Секция: Теория ───────────────────────────────────────────
+function SectionTheory({ title, content }: { title?: string; content: string }) {
+  return (
+    <div className="mb-8">
+      {title && <h3 className="text-lg font-semibold text-bright mb-3">{title}</h3>}
+      <div className="text-soft leading-relaxed text-[15px] whitespace-pre-line prose-custom"
+        dangerouslySetInnerHTML={{ __html: content.replace(/\*\*(.+?)\*\*/g, '<strong class="text-bright">$1</strong>') }}
+      />
+    </div>
+  )
+}
+
+// ─── Секция: Таблица ──────────────────────────────────────────
+function SectionTable({ title, content, data }: { title?: string; content: string; data?: Record<string, string>[] }) {
+  if (!data || data.length === 0) return null
+  const headers = Object.keys(data[0])
+  return (
+    <div className="mb-8">
+      {title && <h3 className="text-lg font-semibold text-bright mb-2">{title}</h3>}
+      {content && <p className="text-muted text-sm mb-3">{content}</p>}
+      <div className="rounded-xl border border-rim overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-card/80 border-b border-rim">
+              {headers.map(h => (
+                <th key={h} className="text-left px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-muted">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row, i) => (
+              <tr key={i} className={cn('border-b border-rim/50 last:border-0', i % 2 === 0 ? '' : 'bg-card/30')}>
+                {headers.map(h => (
+                  <td key={h} className="px-4 py-2.5 text-soft font-greek">{row[h]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// ─── Секция: Стих из Библии ───────────────────────────────────
+function SectionVerse({ title, content }: { title?: string; content: string }) {
+  return (
+    <div className="mb-8 pl-5 border-l-2 border-gold/50">
+      {title && (
+        <div className="text-xs font-bold uppercase tracking-widest text-gold mb-2">{title}</div>
+      )}
+      <div className="text-soft leading-relaxed text-[15px] whitespace-pre-line"
+        dangerouslySetInnerHTML={{ __html: content.replace(/\*\*(.+?)\*\*/g, '<strong class="text-bright font-greek text-lg">$1</strong>') }}
+      />
+    </div>
+  )
+}
+
+// ─── Секция: Подсказка ────────────────────────────────────────
+function SectionTip({ title, content }: { title?: string; content: string }) {
+  return (
+    <div className="mb-8 p-5 rounded-xl bg-teal/5 border border-teal/20">
+      {title && (
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm">💡</span>
+          <span className="text-sm font-semibold text-tealb">{title}</span>
+        </div>
+      )}
+      <div className="text-soft text-sm leading-relaxed whitespace-pre-line"
+        dangerouslySetInnerHTML={{ __html: content.replace(/\*\*(.+?)\*\*/g, '<strong class="text-textc">$1</strong>') }}
+      />
+    </div>
+  )
+}
+
+// ─── Секция: Предупреждение ───────────────────────────────────
+function SectionWarning({ title, content }: { title?: string; content: string }) {
+  return (
+    <div className="mb-8 p-5 rounded-xl bg-rose/5 border border-rose/20">
+      {title && (
+        <div className="text-sm font-semibold text-rose mb-2">{title}</div>
+      )}
+      <div className="text-soft text-sm leading-relaxed whitespace-pre-line"
+        dangerouslySetInnerHTML={{ __html: content.replace(/\*\*(.+?)\*\*/g, '<strong class="text-textc">$1</strong>') }}
+      />
+    </div>
+  )
+}
+
+// ─── Рендер секции ────────────────────────────────────────────
+function RenderSection({ section }: { section: LessonSection }) {
+  switch (section.type) {
+    case 'intro':    return <SectionIntro content={section.content} />
+    case 'theory':   return <SectionTheory title={section.title} content={section.content} />
+    case 'table':    return <SectionTable title={section.title} content={section.content} data={section.data} />
+    case 'verse':    return <SectionVerse title={section.title} content={section.content} />
+    case 'tip':      return <SectionTip title={section.title} content={section.content} />
+    case 'warning':  return <SectionWarning title={section.title} content={section.content} />
+    case 'example':  return <SectionTheory title={section.title} content={section.content} />
+    default:         return null
+  }
+}
+
+// ─── Словарь ──────────────────────────────────────────────────
+function VocabSection({ words }: { words: VocabWord[] }) {
+  const [revealed, setRevealed] = useState<Set<number>>(new Set())
+  if (words.length === 0) return null
+
+  return (
+    <div className="mb-10">
+      <h2 className="text-xl font-semibold text-bright mb-1">Словарь урока</h2>
+      <p className="text-muted text-sm mb-5">Нажмите на карточку чтобы увидеть перевод</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {words.map((w, i) => (
+          <button key={i} onClick={() => setRevealed(p => { const s = new Set(p); s.has(i) ? s.delete(i) : s.add(i); return s })}
+            className={cn(
+              'p-4 rounded-xl border text-left transition-all duration-200 w-full',
+              revealed.has(i)
+                ? 'bg-gold/8 border-gold/30'
+                : 'bg-card border-rim hover:border-muted'
+            )}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="font-greek text-2xl text-bright mb-0.5">{w.greek}</div>
+                <div className="text-xs text-muted">{w.transliteration}</div>
+              </div>
+              {w.frequency && (
+                <div className="text-right shrink-0">
+                  <div className="text-[10px] text-muted uppercase tracking-wider">в НЗ</div>
+                  <div className="font-mono text-gold text-sm font-semibold">{w.frequency}×</div>
+                </div>
+              )}
+            </div>
+            {revealed.has(i) && (
+              <div className="mt-3 pt-3 border-t border-gold/20">
+                <div className="text-textc font-semibold mb-1">{w.translation}</div>
+                {w.example && <div className="text-muted text-xs italic">{w.example}</div>}
+              </div>
+            )}
+            {!revealed.has(i) && (
+              <div className="mt-2 text-xs text-muted/50">нажмите чтобы открыть</div>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Упражнения ───────────────────────────────────────────────
+function ExerciseItem({ ex, index, total }: { ex: Exercise; index: number; total: number }) {
+  const [userAnswer, setUserAnswer]   = useState('')
+  const [selected, setSelected]       = useState<string | null>(null)
+  const [submitted, setSubmitted]     = useState(false)
+  const [showExplanation, setShowExp] = useState(false)
+
+  const correctAnswer = Array.isArray(ex.answer) ? ex.answer[0] : ex.answer
+
+  const isCorrect = submitted && (
+    ex.type === 'choose'
+      ? selected === correctAnswer
+      : userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase()
+  )
+
+  function handleSubmit() {
+    if ((ex.type === 'choose' && !selected) || (ex.type !== 'choose' && !userAnswer.trim())) return
+    setSubmitted(true)
+  }
+
+  function handleReset() {
+    setUserAnswer('')
+    setSelected(null)
+    setSubmitted(false)
+    setShowExp(false)
+  }
+
+  return (
+    <div className={cn(
+      'p-5 rounded-2xl border transition-all',
+      !submitted ? 'bg-card border-rim' :
+      isCorrect  ? 'bg-green-400/5 border-green-400/30' : 'bg-rose/5 border-rose/30'
+    )}>
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <div className="text-xs font-bold uppercase tracking-widest text-muted">
+          Задание {index + 1} / {total}
+        </div>
+        {submitted && (
+          <div className={cn('text-xs font-semibold px-2 py-0.5 rounded-full',
+            isCorrect ? 'text-green-400 bg-green-400/10' : 'text-rose bg-rose/10'
+          )}>
+            {isCorrect ? '✓ Верно!' : '✗ Неверно'}
+          </div>
+        )}
+      </div>
+
+      <p className="text-textc font-semibold mb-4">{ex.question}</p>
+
+      {ex.type === 'choose' && ex.options && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+          {ex.options.map(opt => (
+            <button key={opt}
+              disabled={submitted}
+              onClick={() => !submitted && setSelected(opt)}
+              className={cn(
+                'px-4 py-2.5 rounded-xl text-sm text-left border transition-all',
+                submitted && opt === correctAnswer ? 'bg-green-400/15 border-green-400/50 text-green-400 font-semibold' :
+                submitted && opt === selected && !isCorrect ? 'bg-rose/15 border-rose/50 text-rose' :
+                selected === opt ? 'bg-gold/15 border-gold/50 text-gold' :
+                'bg-night/50 border-rim/50 text-soft hover:border-muted hover:text-textc'
+              )}>
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {(ex.type === 'translate' || ex.type === 'fill') && (
+        <div className="mb-4">
+          {ex.hint && !submitted && (
+            <div className="text-xs text-muted mb-2">Подсказка: {ex.hint}</div>
+          )}
+          <input
+            type="text"
+            value={userAnswer}
+            onChange={e => !submitted && setUserAnswer(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && !submitted && handleSubmit()}
+            disabled={submitted}
+            placeholder="Введите ответ..."
+            className={cn(
+              'w-full px-4 py-2.5 rounded-xl border text-sm bg-night/50 text-textc placeholder:text-muted focus:outline-none transition-all',
+              submitted && isCorrect  ? 'border-green-400/50' :
+              submitted && !isCorrect ? 'border-rose/50' : 'border-rim focus:border-gold/50'
+            )}
+          />
+          {submitted && !isCorrect && (
+            <div className="mt-2 text-sm text-green-400">
+              Правильный ответ: <strong>{correctAnswer}</strong>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="flex items-center gap-3">
+        {!submitted ? (
+          <button onClick={handleSubmit}
+            className="px-4 py-2 rounded-lg text-sm font-semibold bg-gold text-night hover:bg-goldl transition-colors">
+            Проверить
+          </button>
+        ) : (
+          <>
+            <button onClick={handleReset}
+              className="px-4 py-2 rounded-lg text-sm font-semibold bg-card border border-rim text-soft hover:text-textc transition-colors">
+              Ещё раз
+            </button>
+            {ex.explanation && (
+              <button onClick={() => setShowExp(p => !p)}
+                className="text-xs text-gold hover:text-goldl transition-colors">
+                {showExplanation ? 'Скрыть объяснение' : 'Почему?'}
+              </button>
+            )}
+          </>
+        )}
+      </div>
+
+      {showExplanation && ex.explanation && (
+        <div className="mt-4 pt-4 border-t border-rim/50 text-sm text-muted leading-relaxed">
+          {ex.explanation}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ExercisesSection({ exercises }: { exercises: Exercise[] }) {
+  const [score, setScore] = useState<number | null>(null)
+  if (exercises.length === 0) return null
+
+  return (
+    <div className="mb-10">
+      <h2 className="text-xl font-semibold text-bright mb-1">Упражнения</h2>
+      <p className="text-muted text-sm mb-5">{exercises.length} заданий</p>
+      <div className="space-y-4">
+        {exercises.map((ex, i) => (
+          <ExerciseItem key={i} ex={ex} index={i} total={exercises.length} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Итоги урока ──────────────────────────────────────────────
+function SummarySection({ points }: { points: string[] }) {
+  if (points.length === 0) return null
+  return (
+    <div className="mb-10 p-6 rounded-2xl bg-card border border-rim">
+      <h2 className="text-lg font-semibold text-bright mb-4">📋 Итоги урока</h2>
+      <ul className="space-y-2">
+        {points.map((p, i) => (
+          <li key={i} className="flex items-start gap-3 text-sm text-soft">
+            <span className="text-gold mt-0.5 shrink-0">✓</span>
+            <span>{p}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// ─── Главный компонент ────────────────────────────────────────
 interface Props {
-  lesson: CourseLesson
-  module: CourseModule | null
+  lesson: Lesson
+  module: Module | undefined
   userId: string
-  prev: CourseLesson | null
-  next: CourseLesson | null
+  prev: Lesson | null
+  next: Lesson | null
   isCompleted: boolean
 }
 
 export function LessonContent({ lesson, module, userId, prev, next, isCompleted }: Props) {
-  const [revealedMorph, setRevealedMorph] = useState<Set<string>>(new Set())
-  const [revealedTrans, setRevealedTrans] = useState<Set<number>>(new Set())
-  const [completed, setCompleted]         = useState(isCompleted)
-  const [saving, setSaving]               = useState(false)
-
-  function revealMorph(key: string) {
-    setRevealedMorph(prev => new Set([...prev, key]))
-  }
-  function toggleTrans(i: number) {
-    setRevealedTrans(prev => {
-      const s = new Set(prev)
-      s.has(i) ? s.delete(i) : s.add(i)
-      return s
-    })
-  }
+  const [completed, setCompleted] = useState(isCompleted)
+  const [saving, setSaving]       = useState(false)
+  const [tab, setTab]             = useState<'lesson' | 'vocab' | 'exercises'>('lesson')
 
   async function handleComplete() {
     setSaving(true)
@@ -55,220 +346,121 @@ export function LessonContent({ lesson, module, userId, prev, next, isCompleted 
         body: JSON.stringify({ lessonId: lesson.id, completed: true }),
       })
       setCompleted(true)
-    } finally {
-      setSaving(false)
-    }
+    } catch { /* silent */ }
+    finally { setSaving(false) }
   }
 
   return (
-    <article>
+    <div className="max-w-[780px]">
+
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs text-muted mb-6">
+        <span className="text-gold font-semibold">Модуль {lesson.moduleId}</span>
+        <span>/</span>
+        <span>{module?.title}</span>
+      </div>
+
       {/* Header */}
-      <div className="mb-10">
-        <div className="text-xs font-semibold uppercase tracking-[3px] text-tealb mb-3">
-          Модуль {lesson.moduleId} · Урок {lesson.id}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-xs font-bold uppercase tracking-widest text-gold bg-gold/10 px-2.5 py-1 rounded-full">
+            Урок {lesson.id}
+          </span>
+          {lesson.isFree && (
+            <span className="text-xs font-bold uppercase tracking-widest text-tealb bg-tealb/10 px-2.5 py-1 rounded-full">
+              Бесплатно
+            </span>
+          )}
+          {completed && (
+            <span className="text-xs font-bold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+              ✓ Пройден
+            </span>
+          )}
         </div>
-        <h1 className="font-greek text-[clamp(32px,4vw,48px)] font-semibold text-bright leading-tight mb-4">
+        <h1 className="font-greek text-[clamp(28px,4vw,42px)] font-light text-bright leading-tight mb-2">
           {lesson.title}
         </h1>
-        <div className="flex flex-wrap gap-3">
-          {[`⏱ ${lesson.duration}`, '📖 2 падежа', '🔤 3 склонения', '✍️ Домашнее задание'].map(chip => (
-            <span key={chip} className="px-3 py-1.5 rounded-full text-xs bg-card border border-rim text-textc">{chip}</span>
-          ))}
+        <p className="text-soft text-base">{lesson.subtitle}</p>
+        <div className="flex items-center gap-4 mt-3 text-xs text-muted">
+          <span>⏱ {lesson.duration}</span>
+          <span>📖 {lesson.vocab.length} слов</span>
+          <span>✍️ {lesson.exercises.length} заданий</span>
         </div>
       </div>
 
-      {/* ── Main lesson content ── */}
-      <div className="prose prose-invert max-w-none space-y-6 text-base leading-relaxed">
-
-        <h2 className="font-greek text-2xl font-semibold text-bright mt-10 mb-4">Окончания — ключ к смыслу</h2>
-        <p className="text-textc">В русском языке мы говорим <strong className="text-bright">«Бог любит мир»</strong> — и всё понятно из порядка слов. В греческом же слова могут стоять в <em>любом</em> порядке. Смысл определяется <strong className="text-gold">окончанием</strong>.</p>
-
-        {/* Info box */}
-        <div className="bg-gold/5 border border-gold/20 border-l-4 border-l-gold rounded-r-2xl px-6 py-5 not-prose">
-          <div className="text-[10px] font-bold uppercase tracking-[3px] text-gold mb-2">✦ Ключевой принцип</div>
-          <p className="text-sm text-textc leading-relaxed">
-            Порядок слов в греческом используется для <strong className="text-bright">эмфазы</strong>: слово в начале — подчёркнуто. Функцию слова (субъект/объект) определяет <strong className="text-gold">окончание</strong>.
-          </p>
-        </div>
-
-        {/* Word anatomy */}
-        <h2 className="font-greek text-2xl font-semibold text-bright mt-10 mb-4">Строение слова: основа + окончание</h2>
-        <div className="bg-card border border-rim rounded-2xl p-8 not-prose text-center">
-          <div className="font-mono text-[10px] text-muted tracking-[3px] uppercase mb-4">II Склонение · Мужской род</div>
-          <div className="font-greek text-8xl font-bold flex justify-center leading-none mb-8">
-            <span className="text-indigol relative">
-              λογο
-              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-sans text-[9px] font-bold text-indigol uppercase tracking-wider whitespace-nowrap">основа · значение</span>
-            </span>
-            <span className="text-gold relative">
-              ς
-              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-sans text-[9px] font-bold text-gold uppercase tracking-wider whitespace-nowrap">окончание</span>
-            </span>
-          </div>
-          <div className="flex justify-center gap-8 mt-10 flex-wrap">
-            <div className="flex items-center gap-2 text-sm"><span className="w-3 h-3 rounded-full bg-indigol" /><strong className="text-indigol">λογο–</strong> = «слово, речь»</div>
-            <div className="flex items-center gap-2 text-sm"><span className="w-3 h-3 rounded-full bg-gold" /><strong className="text-gold">–ς</strong> = им.п., ед.ч., муж.р.</div>
-          </div>
-        </div>
-
-        {/* Cases table */}
-        <h2 className="font-greek text-2xl font-semibold text-bright mt-10 mb-4">Два падежа</h2>
-        <div className="overflow-x-auto rounded-2xl border border-rim not-prose">
-          <table className="w-full text-sm bg-card">
-            <thead><tr className="bg-gold/8">
-              <th className="px-4 py-3 text-left font-mono text-[10px] text-gold uppercase tracking-wider">Падеж</th>
-              <th className="px-4 py-3 text-left font-mono text-[10px] text-gold uppercase tracking-wider">Форма</th>
-              <th className="px-4 py-3 text-left font-mono text-[10px] text-gold uppercase tracking-wider">Роль</th>
-            </tr></thead>
-            <tbody>
-              <tr className="border-t border-rim/50 hover:bg-white/[.02]">
-                <td className="px-4 py-3"><span className="badge-nom">Именительный</span></td>
-                <td className="px-4 py-3 font-greek text-xl"><span className="text-indigol">ἀπόστολο</span><span className="text-gold font-bold">ς</span></td>
-                <td className="px-4 py-3 text-textc">Подлежащее</td>
-              </tr>
-              <tr className="border-t border-rim/50 hover:bg-white/[.02]">
-                <td className="px-4 py-3"><span className="badge-acc">Винительный</span></td>
-                <td className="px-4 py-3 font-greek text-xl"><span className="text-indigol">ἀπόστολο</span><span className="text-gold font-bold">ν</span></td>
-                <td className="px-4 py-3 text-textc">Прямое дополнение</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Example sentence */}
-        <div className="bg-card border border-rim rounded-2xl p-6 not-prose">
-          <div className="font-greek text-2xl text-goldl mb-2">
-            <span className="text-indigol">ὁ ἀπόστολος</span> πέμπει <span className="text-gold">τὸν ἀπόστολον</span>.
-          </div>
-          <div className="text-sm text-muted italic mb-3">«Апостол посылает апостола.»</div>
-          <div className="flex gap-2 flex-wrap">
-            <span className="badge-nom">ἀπόστολος — подлежащее</span>
-            <span className="badge-acc">ἀπόστολον — дополнение</span>
-          </div>
-        </div>
-
-        {/* Exegesis */}
-        <div className="bg-rose/5 border border-rose/20 border-l-4 border-l-rose rounded-r-2xl px-6 py-5 not-prose mt-8">
-          <div className="text-[10px] font-bold uppercase tracking-[3px] text-rose mb-3">🔍 Экзегетика · Иоанна 1:1</div>
-          <div className="font-greek text-2xl text-goldl mb-3 leading-relaxed">καὶ θεὸς ἦν ὁ λόγος</div>
-          <p className="text-sm text-textc leading-relaxed">
-            «и Слово было Богом». θεός стоит первым — это <strong className="text-bright">эмфаза</strong> на Божественном качестве. Перед θεός нет артикля — значит «Слово» не отождествляется с Отцом. Артикль <strong className="text-gold">ὁ</strong> указывает на «Слово» как на подлежащее. Богословская точность в трёх словах.
-          </p>
-        </div>
-
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 bg-card rounded-xl border border-rim mb-8">
+        {[
+          { key: 'lesson',    label: '📖 Урок' },
+          { key: 'vocab',     label: `📚 Словарь (${lesson.vocab.length})` },
+          { key: 'exercises', label: `✍️ Задания (${lesson.exercises.length})` },
+        ].map(t => (
+          <button key={t.key} onClick={() => setTab(t.key as typeof tab)}
+            className={cn(
+              'flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all',
+              tab === t.key ? 'bg-gold text-night shadow-sm' : 'text-soft hover:text-textc'
+            )}>
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {/* ── HOMEWORK ── */}
-      <div className="mt-14">
-        <h2 className="font-greek text-2xl font-semibold text-bright mb-6">📝 Домашнее задание</h2>
-
-        {/* Exercise 1 — Morphology */}
-        <div className="bg-deep border border-rim rounded-2xl p-7 mb-6">
-          <div className="flex items-center gap-4 mb-5">
-            <div className="w-9 h-9 rounded-full bg-gold text-night flex items-center justify-center font-bold text-sm shrink-0">1</div>
-            <div>
-              <div className="font-semibold text-bright">Морфологический анализ</div>
-              <div className="text-xs text-muted italic mt-0.5">Нажмите на ячейку, чтобы увидеть ответ</div>
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs min-w-[560px]">
-              <thead>
-                <tr className="bg-white/5">
-                  {['#','Форма','Падеж','Число','Род','Лексич. форма','Значение'].map(h => (
-                    <th key={h} className="px-3 py-2.5 text-left font-mono text-gold uppercase tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {DEMO_MORPH.map((r, i) => (
-                  <tr key={i} className="border-t border-rim/30 hover:bg-white/[.02]">
-                    <td className="px-3 py-2.5 font-mono text-gold">{i+1}</td>
-                    <td className="px-3 py-2.5 font-greek text-xl text-goldl">{r.form}</td>
-                    {([r.case_, r.number, r.gender, r.lexical, r.meaning] as string[]).map((val, j) => {
-                      const key = `${i}-${j}`
-                      const shown = revealedMorph.has(key)
-                      return (
-                        <td key={j} className="px-3 py-2.5">
-                          <button
-                            onClick={() => revealMorph(key)}
-                            className={cn(
-                              'px-2 py-1 rounded text-xs font-mono border transition-all min-w-[64px] text-center',
-                              shown
-                                ? 'text-emerald-400 bg-emerald-400/8 border-emerald-400/25'
-                                : 'text-transparent bg-white/5 border-rim hover:border-gold select-none'
-                            )}
-                          >
-                            {shown ? val : '••••'}
-                          </button>
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Content */}
+      {tab === 'lesson' && (
+        <div>
+          {lesson.sections.map((s, i) => <RenderSection key={i} section={s} />)}
+          <SummarySection points={lesson.summary} />
         </div>
+      )}
 
-        {/* Exercise 2 — Translation */}
-        <div className="bg-deep border border-rim rounded-2xl p-7">
-          <div className="flex items-center gap-4 mb-5">
-            <div className="w-9 h-9 rounded-full bg-gold text-night flex items-center justify-center font-bold text-sm shrink-0">2</div>
-            <div>
-              <div className="font-semibold text-bright">Перевод стихов</div>
-              <div className="text-xs text-muted italic mt-0.5">Переведите предложение, затем нажмите «ответ»</div>
-            </div>
-          </div>
-          <div className="space-y-0 divide-y divide-rim/30">
-            {DEMO_TRANS.map((r, i) => (
-              <div key={i} className="py-4 flex items-start gap-4">
-                <span className="font-mono text-xs text-gold pt-0.5 w-5 shrink-0">{i+1}.</span>
-                <div className="flex-1 min-w-0">
-                  <div className="font-greek text-xl text-goldl mb-1">{r.greek}</div>
-                  <div className="font-mono text-[10px] text-muted/50 mb-2">{r.hint}</div>
-                  {revealedTrans.has(i) && (
-                    <div className="text-sm text-emerald-400 italic">{r.answer}</div>
-                  )}
-                </div>
-                <button
-                  onClick={() => toggleTrans(i)}
-                  className="shrink-0 px-3 py-1 rounded-lg border border-rim text-xs font-mono text-muted hover:border-gold hover:text-gold transition-colors"
-                >
-                  {revealedTrans.has(i) ? 'скрыть' : 'ответ'}
-                </button>
-              </div>
-            ))}
-          </div>
+      {tab === 'vocab' && (
+        <VocabSection words={lesson.vocab} />
+      )}
+
+      {tab === 'exercises' && (
+        <ExercisesSection exercises={lesson.exercises} />
+      )}
+
+      {/* Complete button */}
+      {!completed && (
+        <div className="mt-6 mb-10 p-5 rounded-2xl bg-card border border-rim text-center">
+          <p className="text-soft text-sm mb-4">Изучили материал и выполнили упражнения?</p>
+          <button onClick={handleComplete} disabled={saving}
+            className="px-8 py-3 rounded-xl font-semibold bg-gold text-night hover:bg-goldl transition-all disabled:opacity-50 hover:shadow-[0_4px_20px_rgba(212,168,67,.3)]">
+            {saving ? 'Сохраняем...' : '✓ Отметить урок как пройденный'}
+          </button>
         </div>
-      </div>
+      )}
 
-      {/* ── Navigation ── */}
-      <div className="flex items-center justify-between mt-14 pt-8 border-t border-rim flex-wrap gap-4">
+      {/* Navigation */}
+      <div className="flex items-center justify-between gap-4 py-6 border-t border-rim mt-4">
         {prev ? (
-          <Link href={`/lesson/${prev.id}`} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-rim text-sm text-textc hover:border-gold hover:text-gold transition-colors">
-            ← {prev.title}
+          <Link href={`/lesson/${prev.id}`}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rim text-sm text-soft hover:border-muted hover:text-textc transition-all">
+            <span className="text-lg">←</span>
+            <div>
+              <div className="text-xs text-muted">Предыдущий</div>
+              <div className="font-medium truncate max-w-[160px]">{prev.title}</div>
+            </div>
           </Link>
-        ) : <span />}
-
-        <button
-          onClick={handleComplete} disabled={completed || saving}
-          className={cn(
-            'px-6 py-2.5 rounded-xl text-sm font-semibold transition-all',
-            completed
-              ? 'bg-teal/20 text-tealb border border-teal/30 cursor-default'
-              : 'bg-teal text-white hover:bg-tealb'
-          )}
-        >
-          {saving ? 'Сохраняем...' : completed ? '✓ Урок завершён' : 'Отметить как выполненный'}
-        </button>
+        ) : <div />}
 
         {next ? (
-          <Link href={`/lesson/${next.id}`} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gold text-night text-sm font-semibold hover:bg-goldl transition-all hover:shadow-[0_4px_16px_rgba(212,168,67,.3)]">
-            {next.title} →
+          <Link href={`/lesson/${next.id}`}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gold text-night text-sm font-semibold hover:bg-goldl transition-all hover:shadow-[0_4px_20px_rgba(212,168,67,.2)]">
+            <div className="text-right">
+              <div className="text-xs text-night/60">Следующий</div>
+              <div className="truncate max-w-[160px]">{next.title}</div>
+            </div>
+            <span className="text-lg">→</span>
           </Link>
-        ) : <span />}
+        ) : (
+          <Link href="/dashboard"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gold text-night text-sm font-semibold hover:bg-goldl transition-all">
+            В кабинет →
+          </Link>
+        )}
       </div>
-    </article>
+    </div>
   )
 }
