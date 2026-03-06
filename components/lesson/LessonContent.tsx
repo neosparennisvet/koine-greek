@@ -510,9 +510,9 @@ function MatchExercise({ ex }: { ex: any }) {
 
 
 // ═══════════════════════════════════════════════════════
-//  УПРАЖНЕНИЕ — АНАЛИЗ ФОРМ (по тетради Маунса)
+//  УПРАЖНЕНИЕ — АНАЛИЗ ФОРМ (по тетради Маунса) — ИНТЕРАКТИВНЫЙ
 // ═══════════════════════════════════════════════════════
-function ParseExercise({ ex }: { ex: any }) {
+function ParseFormsExercise({ ex }: { ex: any }) {
   const CASES = ['Им.', 'Род.', 'Дат.', 'Вин.', 'Зват.']
   const NUMBERS = ['Ед.', 'Мн.']
   const GENDERS = ['М', 'Ж', 'Ср']
@@ -778,7 +778,7 @@ function TranslateNTExercise({ ex }: { ex: any }) {
 // ═══════════════════════════════════════════════════════
 //  УПРАЖНЕНИЕ — ГРАММАТИЧЕСКИЙ РАЗБОР (АНАЛИЗ)
 // ═══════════════════════════════════════════════════════
-function ParseExercise({ ex }: { ex: any }) {
+function SingleParseExercise({ ex }: { ex: any }) {
   const fields = [
     { key: 'case',    label: 'Падеж',        opts: ['Именительный','Родительный','Дательный','Винительный','Звательный'] },
     { key: 'number',  label: 'Число',        opts: ['ед.','мн.'] },
@@ -1325,7 +1325,7 @@ export function LessonContent({ lesson, module: mod, userId, prev, next, isCompl
                       <MatchExercise ex={ex} />
                     </div>
                   ) : ex.type === 'parse' ? (
-                    <ParseExercise ex={ex} />
+                    <SingleParseExercise ex={ex} />
                   ) : ex.type === 'phrase' ? (
                     <PhraseExercise ex={ex} />
                   ) : (
