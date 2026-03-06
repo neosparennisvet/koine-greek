@@ -9,7 +9,7 @@ interface Props { params: { id: string } }
 
 export async function generateMetadata({ params }: Props) {
   const lesson = getLessonById(params.id)
-  return { title: lesson?.title ?? 'Урок' }
+  return { title: lesson ? `${lesson.title} — Κοινή Greek` : 'Урок' }
 }
 
 export default async function LessonPage({ params }: Props) {
@@ -37,8 +37,7 @@ export default async function LessonPage({ params }: Props) {
   const module_ = getModuleByLessonId(lesson.id)
 
   return (
-    <div className="flex min-h-screen" style={{background: 'var(--c-bg)'}}>
-      {/* Sidebar */}
+    <div className="flex min-h-screen" style={{ background: 'var(--c-bg)' }}>
       <LessonSidebar
         modules={COURSE_MODULES as any}
         currentLessonId={lesson.id}
@@ -46,9 +45,9 @@ export default async function LessonPage({ params }: Props) {
         totalLessons={36}
         doneLessons={completedIds.size}
       />
-      {/* Main content — starts after sidebar, centered in remaining space */}
-      <div className="flex-1 flex justify-center" style={{marginLeft: '300px', minHeight: '100vh'}}>
-        <div className="w-full max-w-[780px] px-6 py-10 md:px-10">
+      {/* Content: starts right after sidebar, padding on left, readable max-width */}
+      <div style={{ marginLeft: '300px', flex: 1, padding: '40px 48px 60px 56px', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '740px' }}>
           <LessonContent
             lesson={lesson}
             module={module_}

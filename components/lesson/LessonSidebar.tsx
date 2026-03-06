@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { AmbientPlayer } from '@/components/ui/AmbientPlayer'
 
 interface Props {
   modules: any[]
@@ -138,7 +139,7 @@ export function LessonSidebar({ modules, currentLessonId, completedIds, totalLes
           style={{color: 'var(--c-muted)'}}>
           ⚙️ Настройки
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-1"><AmbientPlayer /><ThemeToggle /></div>
       </div>
     </aside>
   )

@@ -5,140 +5,291 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-// ─── SVG Иллюстрации ─────────────────────────────────────────
-function Illustration({ type }: { type: string }) {
-  if (type === 'mediterranean-map') return (
-    <div className="my-6 rounded-2xl overflow-hidden border border-rim bg-card">
-      <svg viewBox="0 0 700 280" className="w-full" xmlns="http://www.w3.org/2000/svg">
+// ═══════════════════════════════════════════════════════
+//  SVG ИЛЛЮСТРАЦИИ
+// ═══════════════════════════════════════════════════════
+function MediterraneanMap() {
+  return (
+    <div className="my-6 rounded-2xl overflow-hidden border" style={{borderColor:'var(--c-border)', background:'#0d1e3a'}}>
+      <svg viewBox="0 0 800 380" className="w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="seaGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#1a3a5c"/>
-            <stop offset="100%" stopColor="#0d2035"/>
+          <radialGradient id="seaBg" cx="50%" cy="60%" r="65%">
+            <stop offset="0%" stopColor="#1a3d6e"/>
+            <stop offset="100%" stopColor="#0b1e3a"/>
           </radialGradient>
-          <radialGradient id="alexGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#c99a2e" stopOpacity="0.6"/>
-            <stop offset="100%" stopColor="#c99a2e" stopOpacity="0"/>
-          </radialGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
         </defs>
-        {/* Sea */}
-        <rect width="700" height="280" fill="url(#seaGrad)"/>
-        {/* Wave lines */}
-        {[40,80,120,160,200,240].map(y => (
-          <path key={y} d={`M0 ${y} Q175 ${y-8} 350 ${y} T700 ${y}`} fill="none" stroke="#2a5070" strokeWidth="0.8" opacity="0.6"/>
+
+        {/* Sea background */}
+        <rect width="800" height="380" fill="url(#seaBg)"/>
+
+        {/* Wave texture */}
+        {Array.from({length:12}).map((_,i) => (
+          <path key={i}
+            d={`M0 ${30+i*28} Q${200} ${22+i*28} ${400} ${30+i*28} T800 ${30+i*28}`}
+            fill="none" stroke="#1e4a7a" strokeWidth="0.7" opacity="0.5"/>
         ))}
-        {/* Land masses */}
-        <path d="M50 80 L90 60 L150 55 L200 70 L220 90 L200 110 L160 120 L100 115 L60 100 Z" fill="#2d5a27" opacity="0.8"/>
-        <text x="130" y="90" fill="#7dc87a" fontSize="9" textAnchor="middle" fontFamily="Georgia">ГРЕЦИЯ</text>
-        <path d="M280 40 L340 30 L420 45 L460 70 L440 100 L380 110 L320 100 L270 75 Z" fill="#2d5a27" opacity="0.8"/>
-        <text x="365" y="72" fill="#7dc87a" fontSize="9" textAnchor="middle" fontFamily="Georgia">МАЛАЯ АЗИЯ</text>
-        <path d="M420 120 L480 110 L550 115 L580 140 L560 170 L500 175 L440 160 L415 140 Z" fill="#8b7355" opacity="0.8"/>
-        <text x="498" y="148" fill="#d4b896" fontSize="9" textAnchor="middle" fontFamily="Georgia">ИУДЕЯ</text>
-        <path d="M100 160 L180 150 L240 165 L250 200 L210 220 L140 215 L90 195 Z" fill="#c4a35a" opacity="0.8"/>
-        <text x="170" y="190" fill="#fff" fontSize="9" textAnchor="middle" fontFamily="Georgia">ЕГИПЕТ</text>
-        <path d="M0 100 L40 90 L50 120 L60 160 L40 200 L0 210 Z" fill="#2d6b4a" opacity="0.7"/>
-        <text x="22" y="155" fill="#7dc87a" fontSize="8" textAnchor="middle" fontFamily="Georgia" transform="rotate(-90,22,155)">ИТАЛИЯ</text>
-        {/* Alexander's route */}
-        <path d="M140 85 Q280 60 365 72 Q430 85 465 130 Q510 160 520 148" 
-              fill="none" stroke="#c99a2e" strokeWidth="2" strokeDasharray="5,3" opacity="0.9"/>
-        {/* Glow on route */}
-        <circle cx="140" cy="85" r="5" fill="#c99a2e" opacity="0.9"/>
-        <circle cx="365" cy="72" r="5" fill="#c99a2e" opacity="0.7"/>
-        <circle cx="520" cy="148" r="5" fill="#c99a2e" opacity="0.7"/>
-        {/* Labels */}
-        <text x="150" y="75" fill="#c99a2e" fontSize="8" fontFamily="Georgia">Афины</text>
-        <text x="370" y="65" fill="#c99a2e" fontSize="8" fontFamily="Georgia">Эфес</text>
-        <text x="515" y="142" fill="#c99a2e" fontSize="8" fontFamily="Georgia">Иерусалим</text>
-        {/* Title */}
-        <text x="350" y="260" fill="#8892aa" fontSize="10" textAnchor="middle" fontFamily="Georgia, serif">
-          Греческий язык распространился по всему Средиземноморью (IV в. до н.э.)
+
+        {/* ── LAND MASSES ── */}
+
+        {/* Italian peninsula */}
+        <path d="M200 60 L230 55 L250 70 L260 110 L255 145 L248 170 L242 195
+                 L250 220 L245 245 L235 260 L225 265 L220 255 L230 235 L225 210
+                 L215 185 L205 160 L198 130 L192 100 L190 75 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.8" opacity="0.9"/>
+        <text x="218" y="145" fill="#6dbf7a" fontSize="9" textAnchor="middle" fontFamily="Georgia" transform="rotate(-10,218,145)">ИТАЛИЯ</text>
+
+        {/* Sicily */}
+        <path d="M228 275 L250 268 L265 275 L260 290 L245 295 L228 288 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.6"/>
+        <text x="246" y="285" fill="#6dbf7a" fontSize="7.5" textAnchor="middle" fontFamily="Georgia">Сицилия</text>
+
+        {/* Greece / Balkan peninsula */}
+        <path d="M340 45 L390 38 L430 45 L455 60 L460 90 L450 120
+                 L440 145 L445 165 L435 185 L420 195 L410 185 L415 165
+                 L405 145 L398 120 L385 100 L370 90 L355 80 L342 65 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.8" opacity="0.9"/>
+        <text x="403" y="118" fill="#6dbf7a" fontSize="10" textAnchor="middle" fontFamily="Georgia" fontWeight="bold">ГРЕЦИЯ</text>
+
+        {/* Peloponnese */}
+        <path d="M385 185 L410 180 L418 200 L410 218 L395 222 L382 210 L378 195 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.5"/>
+
+        {/* Crete */}
+        <path d="M380 255 L430 248 L475 253 L478 265 L430 272 L380 268 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.5"/>
+        <text x="428" y="263" fill="#6dbf7a" fontSize="7.5" textAnchor="middle" fontFamily="Georgia">Крит</text>
+
+        {/* Cyprus */}
+        <path d="M590 195 L618 188 L635 195 L630 208 L605 212 L588 205 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.5"/>
+        <text x="612" y="202" fill="#6dbf7a" fontSize="7.5" textAnchor="middle" fontFamily="Georgia">Кипр</text>
+
+        {/* Asia Minor (Turkey) */}
+        <path d="M460 40 L560 32 L640 45 L690 60 L710 85 L700 120
+                 L680 145 L650 160 L620 165 L590 155 L565 140 L545 120
+                 L520 105 L495 95 L470 85 L458 65 Z"
+          fill="#3a5c2a" stroke="#4a7a3a" strokeWidth="0.8" opacity="0.9"/>
+        <text x="585" y="95" fill="#8fd48a" fontSize="10" textAnchor="middle" fontFamily="Georgia" fontWeight="bold">МАЛАЯ АЗИЯ</text>
+        <text x="585" y="108" fill="#6dbf7a" fontSize="8" textAnchor="middle" fontFamily="Georgia">(Турция)</text>
+
+        {/* Ephesus dot */}
+        <circle cx="486" cy="118" r="4" fill="#e8b84b" opacity="0.9"/>
+        <text x="478" y="132" fill="#e8b84b" fontSize="8" textAnchor="middle" fontFamily="Georgia">Эфес</text>
+
+        {/* Antioch */}
+        <circle cx="655" cy="155" r="3.5" fill="#e8b84b" opacity="0.8"/>
+        <text x="655" y="168" fill="#e8b84b" fontSize="8" textAnchor="middle" fontFamily="Georgia">Антиохия</text>
+
+        {/* Judea / Palestine */}
+        <path d="M638 195 L660 185 L680 190 L688 215 L682 240 L668 250
+                 L650 248 L638 232 L633 210 Z"
+          fill="#8b7355" stroke="#a08a6a" strokeWidth="0.7" opacity="0.9"/>
+        <text x="660" y="220" fill="#d4c09a" fontSize="9" textAnchor="middle" fontFamily="Georgia" fontWeight="bold">ИУДЕЯ</text>
+
+        {/* Jerusalem */}
+        <circle cx="662" cy="230" r="4" fill="#f0c96a" filter="url(#glow)"/>
+        <text x="662" y="244" fill="#f0c96a" fontSize="8" textAnchor="middle" fontFamily="Georgia">Иерусалим</text>
+
+        {/* Egypt */}
+        <path d="M560 275 L680 268 L720 280 L725 330 L680 345 L620 348
+                 L565 340 L550 310 Z"
+          fill="#b8965a" stroke="#c8a66a" strokeWidth="0.7" opacity="0.9"/>
+        <text x="636" y="312" fill="#fff" fontSize="10" textAnchor="middle" fontFamily="Georgia" fontWeight="bold">ЕГИПЕТ</text>
+        {/* Alexandria */}
+        <circle cx="580" cy="282" r="4" fill="#e8b84b" opacity="0.9"/>
+        <text x="580" y="295" fill="#e8b84b" fontSize="8" textAnchor="middle" fontFamily="Georgia">Александрия</text>
+
+        {/* North Africa */}
+        <path d="M0 290 L200 278 L340 285 L380 300 L360 345 L280 355
+                 L160 360 L60 355 L0 345 Z"
+          fill="#a89060" stroke="#c0a870" strokeWidth="0.7" opacity="0.8"/>
+        <text x="175" y="325" fill="#e8d090" fontSize="9" textAnchor="middle" fontFamily="Georgia">СЕВЕРНАЯ АФРИКА</text>
+
+        {/* Carthage */}
+        <circle cx="265" cy="285" r="3.5" fill="#e8b84b" opacity="0.7"/>
+        <text x="265" y="298" fill="#e8b84b" fontSize="7.5" textAnchor="middle" fontFamily="Georgia">Карфаген</text>
+
+        {/* Spain / Hispania */}
+        <path d="M0 68 L100 52 L155 60 L175 85 L160 120 L130 140
+                 L90 150 L50 140 L20 115 L0 95 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.7" opacity="0.8"/>
+        <text x="88" y="103" fill="#6dbf7a" fontSize="9" textAnchor="middle" fontFamily="Georgia">ИСПАНИЯ</text>
+
+        {/* Gaul (France) */}
+        <path d="M110 38 L195 32 L215 48 L205 65 L180 75 L155 68 L120 55 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.6" opacity="0.7"/>
+        <text x="162" y="55" fill="#6dbf7a" fontSize="8" textAnchor="middle" fontFamily="Georgia">ГАЛЛИЯ</text>
+
+        {/* Macedonia / northern Greece */}
+        <path d="M335 40 L390 32 L410 42 L405 62 L385 68 L355 65 L335 52 Z"
+          fill="#2a5c3a" stroke="#3a7a4a" strokeWidth="0.6"/>
+        <text x="372" y="55" fill="#6dbf7a" fontSize="7.5" textAnchor="middle" fontFamily="Georgia">МАКЕДОНИЯ</text>
+
+        {/* ── CITIES ── */}
+        {/* Rome */}
+        <circle cx="232" cy="185" r="5" fill="#e8b84b" opacity="0.95" filter="url(#glow)"/>
+        <text x="232" y="199" fill="#e8b84b" fontSize="8.5" textAnchor="middle" fontFamily="Georgia" fontWeight="bold">Рим</text>
+
+        {/* Athens */}
+        <circle cx="412" cy="193" r="4.5" fill="#e8b84b" opacity="0.9" filter="url(#glow)"/>
+        <text x="412" y="207" fill="#e8b84b" fontSize="8.5" textAnchor="middle" fontFamily="Georgia" fontWeight="bold">Афины</text>
+
+        {/* Corinth */}
+        <circle cx="396" cy="188" r="3" fill="#e8b84b" opacity="0.7"/>
+        <text x="384" y="196" fill="#e8b84b" fontSize="7.5" fontFamily="Georgia">Коринф</text>
+
+        {/* Thessaloniki */}
+        <circle cx="418" cy="155" r="3" fill="#e8b84b" opacity="0.7"/>
+        <text x="418" y="148" fill="#e8b84b" fontSize="7.5" textAnchor="middle" fontFamily="Georgia">Фессалоника</text>
+
+        {/* ── ALEXANDER'S ROUTE ── */}
+        <path d="M395 170 Q415 165 430 155 Q455 135 460 105
+                 Q470 82 490 75 Q540 55 590 48
+                 Q640 42 685 55 Q705 68 715 85
+                 Q700 115 685 140 Q665 158 655 155
+                 Q640 165 625 162 Q590 155 570 148
+                 Q555 140 548 130 Q538 118 524 110
+                 Q495 98 488 118 Q480 138 485 160
+                 Q490 185 488 205 Q482 225 475 240
+                 Q465 255 460 268 Q452 285 448 300
+                 Q445 318 450 335 Q455 350 462 360"
+          fill="none" stroke="#f0c96a" strokeWidth="2.5" strokeDasharray="8,4"
+          opacity="0.85"/>
+
+        {/* Route arrow dots */}
+        {[
+          [395,170], [455,110], [590,48], [685,62], [655,155], [488,205], [462,335]
+        ].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r="3.5" fill="#f0c96a" opacity={0.9-i*0.05}/>
+        ))}
+
+        {/* ── LEGEND ── */}
+        <rect x="12" y="12" width="195" height="78" rx="8"
+          fill="rgba(13,30,58,0.85)" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+        <text x="22" y="32" fill="#f0f4ff" fontSize="10.5" fontFamily="Georgia" fontWeight="bold">
+          Греческий мир I в. н.э.
+        </text>
+        <line x1="22" y1="42" x2="200" y2="42" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8"/>
+        <circle cx="30" cy="55" r="4" fill="#f0c96a"/>
+        <text x="42" y="59" fill="#f0c96a" fontSize="9" fontFamily="Georgia">Маршрут Александра</text>
+        <circle cx="30" cy="72" r="4" fill="#e8b84b"/>
+        <text x="42" y="76" fill="#e8b84b" fontSize="9" fontFamily="Georgia">Ключевые города</text>
+        <rect x="25" y="82" width="12" height="6" rx="2" fill="#2a5c3a"/>
+        <text x="42" y="89" fill="#6dbf7a" fontSize="9" fontFamily="Georgia">Территории</text>
+
+        {/* Greek text label */}
+        <text x="400" y="370" fill="rgba(200,212,240,0.35)" fontSize="10"
+          textAnchor="middle" fontFamily="Georgia, serif" fontStyle="italic">
+          ἡ Μεσόγειος θάλασσα — Средиземное море
         </text>
       </svg>
     </div>
   )
+}
 
-  if (type === 'timeline') return (
-    <div className="my-6 rounded-2xl overflow-hidden border border-rim bg-card p-6">
-      <svg viewBox="0 0 680 100" className="w-full" xmlns="http://www.w3.org/2000/svg">
-        <line x1="30" y1="50" x2="650" y2="50" stroke="var(--c-border)" strokeWidth="2"/>
-        {[
-          { x: 50,  label: 'XIII до н.э.', sub: 'Линейное\nписьмо Б', col: '#8892aa' },
-          { x: 175, label: 'VIII–IV до н.э.', sub: 'Классический\nгреческий', col: '#5b6ef5' },
-          { x: 310, label: 'IV до н.э.', sub: 'Александр\nВеликий', col: '#c99a2e' },
-          { x: 440, label: 'III до н.э.–IV н.э.', sub: 'Койне / НЗ', col: '#3abfae' },
-          { x: 620, label: 'Сегодня', sub: 'Новогреческий', col: '#7dc87a' },
-        ].map(({ x, label, sub, col }) => (
+function Timeline() {
+  const items = [
+    { x: 60,  y: 50, label: 'XIII до н.э.', sub: 'Линейное письмо Б', col: '#5a6385', r: 6 },
+    { x: 180, y: 50, label: 'VIII–IV до н.э.', sub: 'Классический греческий\n(Гомер, Платон)', col: '#5b6ef5', r: 7 },
+    { x: 330, y: 50, label: 'IV до н.э.', sub: 'Александр Великий\nраспространяет язык', col: '#c99a2e', r: 8 },
+    { x: 490, y: 50, label: 'III до н.э. – IV н.э.', sub: 'КОЙНЕ — язык НЗ', col: '#3abfae', r: 10 },
+    { x: 650, y: 50, label: 'Сегодня', sub: 'Новогреческий\n(13 млн чел.)', col: '#6dbf7a', r: 6 },
+  ]
+  return (
+    <div className="my-6 rounded-2xl border p-5" style={{borderColor:'var(--c-border)', background:'var(--c-card)'}}>
+      <div className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{color:'var(--c-muted)'}}>
+        Хронология греческого языка
+      </div>
+      <svg viewBox="0 0 720 120" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <line x1="40" y1="50" x2="680" y2="50" stroke="var(--c-border)" strokeWidth="2"/>
+        {items.map(({ x, y, label, sub, col, r }) => (
           <g key={x}>
-            <circle cx={x} cy="50" r="6" fill={col} opacity="0.9"/>
-            <text x={x} y="28" fill={col} fontSize="8.5" textAnchor="middle" fontFamily="Georgia">{label}</text>
+            <circle cx={x} cy={y} r={r} fill={col} opacity="0.9"/>
+            <text x={x} y={y - r - 6} fill={col} fontSize="8.5" textAnchor="middle"
+              fontFamily="Georgia, serif" fontWeight="500">{label}</text>
             {sub.split('\n').map((line, i) => (
-              <text key={i} x={x} y={70 + i * 13} fill="var(--c-soft)" fontSize="8" textAnchor="middle" fontFamily="Georgia">{line}</text>
+              <text key={i} x={x} y={y + r + 14 + i * 13} fill="var(--c-soft)"
+                fontSize="8" textAnchor="middle" fontFamily="Georgia, serif">{line}</text>
             ))}
           </g>
         ))}
       </svg>
     </div>
   )
+}
 
-  if (type === 'alphabet-chart') return (
-    <div className="my-6 rounded-2xl border border-rim bg-card overflow-hidden">
-      <div className="px-5 py-3 border-b border-rim">
-        <span className="text-xs font-bold uppercase tracking-widest text-gold">Греческий алфавит — 24 буквы</span>
+function AlphabetChart() {
+  const letters = [
+    ['Α α','альфа','[а]',false], ['Β β','бета','[б]',true],  ['Γ γ','гамма','[г]',false], ['Δ δ','дельта','[д]',false],
+    ['Ε ε','эпсилон','[э]кр.',false],['Ζ ζ','дзета','[дз]',false],['Η η','эта','[э]дл.',true],['Θ θ','тета','[тх]',false],
+    ['Ι ι','йота','[и]',false], ['Κ κ','каппа','[к]',false], ['Λ λ','лямбда','[л]',false],['Μ μ','мю','[м]',false],
+    ['Ν ν','ню','[н]',true],    ['Ξ ξ','кси','[кс]',false],  ['Ο ο','омикрон','[о]кр.',false],['Π π','пи','[п]',false],
+    ['Ρ ρ','ро','[р]',false],   ['Σ σ/ς','сигма','[с]',false],['Τ τ','тау','[т]',false],['Υ υ','ипсилон','[ю]',false],
+    ['Φ φ','фи','[ф]',false],   ['Χ χ','хи','[х]',false],    ['Ψ ψ','пси','[пс]',false],['Ω ω','омега','[о]дл.',false],
+  ]
+  return (
+    <div className="my-6 rounded-2xl border overflow-hidden" style={{borderColor:'var(--c-border)'}}>
+      <div className="px-5 py-3 flex items-center justify-between border-b" style={{background:'var(--c-card)', borderColor:'var(--c-border)'}}>
+        <span className="text-[12px] font-bold uppercase tracking-widest text-gold">Греческий алфавит — 24 буквы</span>
+        <span className="text-[11px] px-2 py-0.5 rounded-full" style={{background:'rgba(192,68,90,.15)', color:'#e07a8e'}}>
+          ⚠️ красные — буквы-ловушки
+        </span>
       </div>
-      <svg viewBox="0 0 680 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
-        {/* 24 letters in 6 rows x 4 cols */}
-        {[
-          ['Αα','альфа','[а]'], ['Ββ','бета','[б]'], ['Γγ','гамма','[г]'], ['Δδ','дельта','[д]'],
-          ['Εε','эпсилон','[э]'], ['Ζζ','дзета','[дз]'], ['Ηη','эта','[э̄]★'], ['Θθ','тета','[тх]'],
-          ['Ιι','йота','[и]'], ['Κκ','каппа','[к]'], ['Λλ','лямбда','[л]'], ['Μμ','мю','[м]'],
-          ['Νν','ню','[н]★'], ['Ξξ','кси','[кс]'], ['Οο','омикрон','[о]'], ['Ππ','пи','[п]'],
-          ['Ρρ','ро','[р]'], ['Σσς','сигма','[с]'], ['Ττ','тау','[т]'], ['Υυ','ипсилон','[ю]'],
-          ['Φφ','фи','[ф]'], ['Χχ','хи','[х]'], ['Ψψ','пси','[пс]'], ['Ωω','омега','[о̄]'],
-        ].map(([letter, name, sound], i) => {
-          const col = i % 4
-          const row = Math.floor(i / 4)
-          const x = 15 + col * 168
-          const y = 12 + row * 42
-          const isTraicky = sound.includes('★')
-          return (
-            <g key={i}>
-              <rect x={x} y={y} width="158" height="36" rx="6"
-                fill={isTraicky ? 'rgba(192,68,90,0.08)' : 'rgba(255,255,255,0.02)'}
-                stroke={isTraicky ? 'rgba(192,68,90,0.3)' : 'var(--c-border)'} strokeWidth="0.5"/>
-              <text x={x+10} y={y+24} fontSize="18" fill={isTraicky ? '#e07a8e' : 'var(--c-heading)'}
-                fontFamily="Georgia, serif" fontWeight="500">{letter.replace('★','')}</text>
-              <text x={x+58} y={y+16} fontSize="8" fill="var(--c-muted)" fontFamily="sans-serif">{name}</text>
-              <text x={x+58} y={y+28} fontSize="9" fill={isTraicky ? '#e07a8e' : '#3abfae'} fontFamily="monospace">
-                {sound.replace('★','')} {isTraicky ? '⚠️' : ''}
-              </text>
-            </g>
-          )
-        })}
-      </svg>
-      <div className="px-5 py-2 border-t border-rim text-xs text-muted">
-        ⚠️ Красным выделены «ловушки» — буквы, похожие на русские, но звучащие иначе
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4" style={{background:'var(--c-card)'}}>
+        {letters.map(([letter, name, sound, tricky], i) => (
+          <div key={i} className="p-3 border-b border-r" style={{
+            borderColor:'var(--c-border)',
+            background: tricky ? 'rgba(192,68,90,0.08)' : 'transparent'
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
+              fontSize: '26px',
+              lineHeight: 1.1,
+              color: tricky ? '#e07a8e' : 'var(--c-heading)',
+              fontWeight: 500,
+              letterSpacing: '0.02em',
+            }}>{letter as string}</div>
+            <div style={{fontSize:'11px', color:'var(--c-muted)', marginTop:'2px'}}>{name as string}</div>
+            <div style={{
+              fontSize:'13px',
+              fontFamily:'monospace',
+              color: tricky ? '#e07a8e' : '#3abfae',
+              fontWeight: 600,
+              marginTop:'2px',
+            }}>{sound as string}{tricky ? ' ⚠️' : ''}</div>
+          </div>
+        ))}
       </div>
     </div>
   )
-
-  return null
 }
 
-// ─── Рендер секции ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  РЕНДЕР СЕКЦИЙ
+// ═══════════════════════════════════════════════════════
 function RenderSection({ s }: { s: any }) {
+  if (s.type === 'illustration') {
+    if (s.illustration === 'mediterranean-map') return <MediterraneanMap />
+    if (s.illustration === 'timeline') return <Timeline />
+    if (s.illustration === 'alphabet-chart') return <AlphabetChart />
+    return null
+  }
+
   const html = (text: string) => ({
-    __html: text
+    __html: (text || '')
       .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--c-heading);font-weight:600">$1</strong>')
       .replace(/\n/g, '<br/>')
   })
 
   switch (s.type) {
-    case 'illustration':
-      return <Illustration type={s.illustration} />
-
     case 'intro':
       return (
-        <div className="mb-8 p-6 rounded-2xl bg-card border border-rim">
-          <div className="text-[15px] leading-[1.85] text-soft"
+        <div className="mb-8 p-6 rounded-2xl border" style={{background:'var(--c-card)', borderColor:'var(--c-border)'}}>
+          <div style={{fontSize:'16px', lineHeight:'1.85', color:'var(--c-text)'}}
             dangerouslySetInnerHTML={html(s.content)} />
         </div>
       )
@@ -146,33 +297,36 @@ function RenderSection({ s }: { s: any }) {
     case 'theory':
       return (
         <div className="mb-7">
-          {s.title && <h3 className="text-[17px] font-semibold text-bright mb-3">{s.title}</h3>}
-          <div className="text-[15px] leading-[1.85] text-soft lesson-prose"
+          {s.title && <h3 style={{fontSize:'19px', fontWeight:600, color:'var(--c-heading)', marginBottom:'10px'}}>{s.title}</h3>}
+          <div style={{fontSize:'16px', lineHeight:'1.85', color:'var(--c-text)'}}
             dangerouslySetInnerHTML={html(s.content)} />
         </div>
       )
 
-    case 'table':
+    case 'table': {
       if (!s.data?.length) return null
       const headers = Object.keys(s.data[0])
       return (
-        <div className="mb-7">
-          {s.title && <h3 className="text-[17px] font-semibold text-bright mb-2">{s.title}</h3>}
-          {s.content && <p className="text-sm text-muted mb-3">{s.content}</p>}
-          <div className="rounded-xl border border-rim overflow-hidden shadow-sm">
-            <table className="w-full text-[14px]">
+        <div className="mb-8">
+          {s.title && <h3 style={{fontSize:'19px', fontWeight:600, color:'var(--c-heading)', marginBottom:'6px'}}>{s.title}</h3>}
+          {s.content && <p style={{fontSize:'14px', color:'var(--c-muted)', marginBottom:'10px'}}>{s.content}</p>}
+          <div className="rounded-xl overflow-hidden border" style={{borderColor:'var(--c-border)'}}>
+            <table className="lesson-table">
               <thead>
-                <tr className="bg-card border-b border-rim">
-                  {headers.map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-muted">{h}</th>
-                  ))}
+                <tr>
+                  {headers.map(h => <th key={h}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {s.data.map((row: any, i: number) => (
-                  <tr key={i} className="border-b border-rim/40 last:border-0 hover:bg-card/50 transition-colors">
-                    {headers.map(h => (
-                      <td key={h} className="px-4 py-3 text-soft" style={{fontFamily: 'var(--font-cormorant), Georgia, serif', fontSize: '15px'}}>
+                  <tr key={i}>
+                    {headers.map((h, hi) => (
+                      <td key={h} style={{
+                        fontFamily: hi === 0 ? 'var(--font-cormorant), Georgia, serif' : 'inherit',
+                        fontSize: hi === 0 ? '18px' : '15px',
+                        color: hi === 0 ? 'var(--c-heading)' : 'var(--c-text)',
+                        fontWeight: hi === 0 ? 500 : 400,
+                      }}>
                         {row[h]}
                       </td>
                     ))}
@@ -183,30 +337,35 @@ function RenderSection({ s }: { s: any }) {
           </div>
         </div>
       )
+    }
 
     case 'verse':
       return (
-        <div className="mb-7 pl-5 border-l-[3px] border-gold/60 py-1">
-          {s.title && <div className="text-[11px] font-bold uppercase tracking-widest text-gold mb-2">{s.title}</div>}
-          <div className="text-[15px] leading-[1.85] text-soft"
+        <div className="mb-7 pl-5 py-1" style={{borderLeft:'3px solid rgba(201,154,46,.6)'}}>
+          {s.title && (
+            <div style={{fontSize:'11px', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'#c99a2e', marginBottom:'6px'}}>
+              {s.title}
+            </div>
+          )}
+          <div style={{fontSize:'16px', lineHeight:'1.85', color:'var(--c-text)'}}
             dangerouslySetInnerHTML={html(s.content)} />
         </div>
       )
 
     case 'tip':
       return (
-        <div className="mb-7 p-5 rounded-xl bg-teal/5 border border-teal/20">
-          {s.title && <div className="text-[13px] font-semibold text-tealb mb-2">💡 {s.title}</div>}
-          <div className="text-[14px] leading-[1.8] text-soft"
+        <div className="mb-7 p-5 rounded-xl" style={{background:'rgba(46,158,143,.07)', border:'1px solid rgba(46,158,143,.25)'}}>
+          {s.title && <div style={{fontSize:'14px', fontWeight:600, color:'#3abfae', marginBottom:'6px'}}>💡 {s.title}</div>}
+          <div style={{fontSize:'15px', lineHeight:'1.8', color:'var(--c-text)'}}
             dangerouslySetInnerHTML={html(s.content)} />
         </div>
       )
 
     case 'warning':
       return (
-        <div className="mb-7 p-5 rounded-xl bg-rose/5 border border-rose/25">
-          {s.title && <div className="text-[13px] font-semibold text-rose mb-2">{s.title}</div>}
-          <div className="text-[14px] leading-[1.8] text-soft"
+        <div className="mb-7 p-5 rounded-xl" style={{background:'rgba(192,68,90,.07)', border:'1px solid rgba(192,68,90,.3)'}}>
+          {s.title && <div style={{fontSize:'14px', fontWeight:600, color:'#e07a8e', marginBottom:'6px'}}>{s.title}</div>}
+          <div style={{fontSize:'15px', lineHeight:'1.8', color:'var(--c-text)'}}
             dangerouslySetInnerHTML={html(s.content)} />
         </div>
       )
@@ -215,67 +374,74 @@ function RenderSection({ s }: { s: any }) {
   }
 }
 
-// ─── Словарь ──────────────────────────────────────────────────
-function VocabCard({ w, index }: { w: any; index: number }) {
+// ═══════════════════════════════════════════════════════
+//  СЛОВАРЬ
+// ═══════════════════════════════════════════════════════
+function VocabCard({ w }: { w: any }) {
   const [open, setOpen] = useState(false)
   return (
-    <button onClick={() => setOpen(p => !p)}
-      className={cn(
-        'w-full p-4 rounded-xl border text-left transition-all duration-200',
-        open ? 'bg-gold/6 border-gold/35 shadow-sm' : 'bg-card border-rim hover:border-muted'
-      )}>
+    <button onClick={() => setOpen(p => !p)} className="w-full text-left rounded-xl border transition-all duration-200"
+      style={{
+        padding: '14px 16px',
+        background: open ? 'rgba(201,154,46,.06)' : 'var(--c-card)',
+        borderColor: open ? 'rgba(201,154,46,.4)' : 'var(--c-border)',
+      }}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div style={{fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'22px', color:'var(--c-heading)', lineHeight:1.2, letterSpacing:'0.01em'}}>
+          <div style={{fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'24px', color:'var(--c-heading)', lineHeight:1.2, letterSpacing:'0.02em'}}>
             {w.greek}
           </div>
-          <div className="text-[12px] text-muted mt-0.5 font-mono">{w.transliteration}</div>
+          <div style={{fontSize:'12px', color:'var(--c-muted)', fontFamily:'monospace', marginTop:'2px'}}>
+            {w.transliteration}
+          </div>
         </div>
         {w.frequency && (
           <div className="text-right shrink-0">
-            <div className="text-[10px] text-muted uppercase tracking-wider">в НЗ</div>
-            <div className="text-gold text-[13px] font-bold font-mono">{w.frequency.toLocaleString()}×</div>
+            <div style={{fontSize:'10px', color:'var(--c-muted)', textTransform:'uppercase', letterSpacing:'0.08em'}}>в НЗ</div>
+            <div style={{fontSize:'15px', color:'#c99a2e', fontWeight:700, fontFamily:'monospace'}}>
+              {w.frequency.toLocaleString()}×
+            </div>
           </div>
         )}
       </div>
-      {open && (
-        <div className="mt-3 pt-3 border-t border-gold/20">
-          <div className="text-[15px] font-semibold text-bright mb-1">{w.translation}</div>
-          {w.example && <div className="text-[13px] text-muted italic">{w.example}</div>}
+      {open ? (
+        <div className="mt-3 pt-3" style={{borderTop:'1px solid rgba(201,154,46,.2)'}}>
+          <div style={{fontSize:'17px', fontWeight:600, color:'var(--c-heading)', marginBottom:'4px'}}>{w.translation}</div>
+          {w.example && <div style={{fontSize:'13px', color:'var(--c-muted)', fontStyle:'italic'}}>{w.example}</div>}
         </div>
+      ) : (
+        <div style={{fontSize:'11px', color:'rgba(90,99,133,.5)', marginTop:'6px'}}>нажмите для перевода</div>
       )}
-      {!open && <div className="mt-2 text-[11px] text-muted/40">нажмите для перевода</div>}
     </button>
   )
 }
 
-// ─── Упражнение: сопоставление ────────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — СОПОСТАВЛЕНИЕ
+// ═══════════════════════════════════════════════════════
 function MatchExercise({ ex }: { ex: any }) {
-  const [selected, setSelected] = useState<string | null>(null)
-  const [matched, setMatched]   = useState<Record<string, string>>({})
-  const [wrong, setWrong]       = useState<string | null>(null)
-
   const pairs = ex.pairs ?? []
-  const rights = [...pairs.map((p: any) => p.right)].sort(() => Math.random() - 0.5)
-  const [shuffled] = useState(rights)
+  const [shuffledRight] = useState(() => [...pairs.map((p: any) => p.right)].sort(() => Math.random() - 0.5))
+  const [selectedLeft,  setSelLeft]  = useState<string | null>(null)
+  const [matched,       setMatched]  = useState<Record<string, string>>({})
+  const [wrongRight,    setWrongRight] = useState<string | null>(null)
 
-  function selectLeft(left: string) {
+  function clickLeft(left: string) {
     if (matched[left]) return
-    setSelected(left)
-    setWrong(null)
+    setSelLeft(l => l === left ? null : left)
+    setWrongRight(null)
   }
 
-  function selectRight(right: string) {
-    if (!selected) return
+  function clickRight(right: string) {
+    if (!selectedLeft) return
     if (Object.values(matched).includes(right)) return
-
-    const correct = pairs.find((p: any) => p.left === selected)?.right
+    const correct = pairs.find((p: any) => p.left === selectedLeft)?.right
     if (correct === right) {
-      setMatched(prev => ({ ...prev, [selected]: right }))
-      setSelected(null)
+      setMatched(prev => ({ ...prev, [selectedLeft]: right }))
+      setSelLeft(null)
     } else {
-      setWrong(right)
-      setTimeout(() => { setWrong(null); setSelected(null) }, 800)
+      setWrongRight(right)
+      setTimeout(() => { setWrongRight(null); setSelLeft(null) }, 700)
     }
   }
 
@@ -284,84 +450,105 @@ function MatchExercise({ ex }: { ex: any }) {
   return (
     <div>
       {done ? (
-        <div className="p-4 rounded-xl bg-green-400/10 border border-green-400/30 text-center text-green-400 font-semibold text-sm">
-          ✓ Отлично! Все пары сопоставлены верно.
+        <div className="p-4 rounded-xl text-center text-sm font-semibold"
+          style={{background:'rgba(109,191,122,.1)', border:'1px solid rgba(109,191,122,.3)', color:'#6dbf7a'}}>
+          ✓ Отлично! Все пары правильно сопоставлены.
         </div>
       ) : (
-        <div className="flex gap-4">
-          <div className="flex-1 space-y-2">
-            {pairs.map((p: any) => (
-              <button key={p.left} onClick={() => selectLeft(p.left)}
-                disabled={!!matched[p.left]}
-                className={cn(
-                  'w-full px-4 py-2.5 rounded-lg text-sm border text-left transition-all font-greek',
-                  matched[p.left] ? 'bg-green-400/10 border-green-400/30 text-green-400 opacity-60' :
-                  selected === p.left ? 'bg-gold/15 border-gold/50 text-gold' :
-                  'bg-card border-rim text-soft hover:border-muted hover:text-textc'
-                )}>
-                {p.left}
-              </button>
-            ))}
+        <>
+          <div className="flex gap-3">
+            <div className="flex-1 space-y-2">
+              {pairs.map((p: any) => {
+                const isMatched = !!matched[p.left]
+                const isSel = selectedLeft === p.left
+                return (
+                  <button key={p.left} onClick={() => clickLeft(p.left)} disabled={isMatched}
+                    className="w-full px-4 py-2.5 rounded-xl text-left border transition-all"
+                    style={{
+                      fontSize:'15px',
+                      fontFamily:'var(--font-cormorant),Georgia,serif',
+                      background: isMatched ? 'rgba(109,191,122,.1)' : isSel ? 'rgba(201,154,46,.12)' : 'var(--c-card)',
+                      borderColor: isMatched ? 'rgba(109,191,122,.35)' : isSel ? 'rgba(201,154,46,.5)' : 'var(--c-border)',
+                      color: isMatched ? '#6dbf7a' : isSel ? '#c99a2e' : 'var(--c-text)',
+                      opacity: isMatched ? 0.7 : 1,
+                    }}>
+                    {p.left}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="flex-1 space-y-2">
+              {shuffledRight.map((right: string) => {
+                const isMatched = Object.values(matched).includes(right)
+                const isWrong = wrongRight === right
+                return (
+                  <button key={right} onClick={() => clickRight(right)} disabled={isMatched}
+                    className="w-full px-4 py-2.5 rounded-xl text-left border transition-all"
+                    style={{
+                      fontSize:'15px',
+                      background: isMatched ? 'rgba(109,191,122,.1)' : isWrong ? 'rgba(192,68,90,.1)' : 'var(--c-card)',
+                      borderColor: isMatched ? 'rgba(109,191,122,.35)' : isWrong ? 'rgba(192,68,90,.4)' : 'var(--c-border)',
+                      color: isMatched ? '#6dbf7a' : isWrong ? '#e07a8e' : 'var(--c-text)',
+                      opacity: isMatched ? 0.7 : 1,
+                    }}>
+                    {right}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-          <div className="flex-1 space-y-2">
-            {shuffled.map((right: string) => {
-              const isMatched = Object.values(matched).includes(right)
-              return (
-                <button key={right} onClick={() => selectRight(right)}
-                  disabled={isMatched}
-                  className={cn(
-                    'w-full px-4 py-2.5 rounded-lg text-sm border text-left transition-all',
-                    isMatched ? 'bg-green-400/10 border-green-400/30 text-green-400 opacity-60' :
-                    wrong === right ? 'bg-rose/15 border-rose/50 text-rose' :
-                    'bg-card border-rim text-soft hover:border-muted hover:text-textc'
-                  )}>
-                  {right}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
-      {selected && !done && (
-        <p className="mt-2 text-xs text-gold">Выбрано: «{selected}» — теперь выберите перевод справа</p>
+          {selectedLeft && (
+            <p style={{fontSize:'12px', color:'#c99a2e', marginTop:'8px'}}>
+              Выбрано: «{selectedLeft}» — теперь выберите перевод справа ↑
+            </p>
+          )}
+        </>
       )}
     </div>
   )
 }
 
-// ─── Упражнение: выбор / перевод ─────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  СТАНДАРТНОЕ УПРАЖНЕНИЕ
+// ═══════════════════════════════════════════════════════
 function StandardExercise({ ex }: { ex: any }) {
-  const [selected, setSelected]   = useState<string>('')
-  const [input, setInput]         = useState('')
+  const [sel,       setSel]       = useState('')
+  const [input,     setInput]     = useState('')
   const [submitted, setSubmitted] = useState(false)
-  const [showExp, setShowExp]     = useState(false)
+  const [showExp,   setShowExp]   = useState(false)
 
-  const correct = Array.isArray(ex.answer) ? ex.answer[0] : ex.answer
-  const isCorrect = submitted && (
+  const correct    = Array.isArray(ex.answer) ? ex.answer[0] : ex.answer
+  const isCorrect  = submitted && (
     ex.type === 'choose'
-      ? selected === correct
-      : input.trim().toLowerCase() === correct.toLowerCase()
+      ? sel === correct
+      : input.trim().toLowerCase().replace(/ё/g,'е') === correct.toLowerCase().replace(/ё/g,'е')
   )
 
   return (
-    <div className={cn(
-      'p-5 rounded-2xl border transition-all',
-      !submitted ? 'bg-card border-rim' :
-      isCorrect ? 'bg-green-400/5 border-green-400/25' : 'bg-rose/5 border-rose/20'
-    )}>
-      <p className="text-[15px] font-semibold text-bright mb-4">{ex.question}</p>
+    <div className="p-5 rounded-2xl border transition-all" style={{
+      background: !submitted ? 'var(--c-card)' : isCorrect ? 'rgba(109,191,122,.05)' : 'rgba(192,68,90,.05)',
+      borderColor: !submitted ? 'var(--c-border)' : isCorrect ? 'rgba(109,191,122,.3)' : 'rgba(192,68,90,.25)',
+    }}>
+      <p style={{fontSize:'16px', fontWeight:600, color:'var(--c-heading)', marginBottom:'14px'}}>{ex.question}</p>
 
       {ex.type === 'choose' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
           {ex.options?.map((opt: string) => (
-            <button key={opt} disabled={submitted} onClick={() => !submitted && setSelected(opt)}
-              className={cn(
-                'px-4 py-2.5 rounded-xl text-[14px] text-left border transition-all',
-                submitted && opt === correct ? 'bg-green-400/12 border-green-400/40 text-green-400 font-semibold' :
-                submitted && opt === selected && !isCorrect ? 'bg-rose/12 border-rose/40 text-rose' :
-                selected === opt ? 'bg-gold/12 border-gold/40 text-gold' :
-                'bg-night/40 border-rim/60 text-soft hover:border-muted hover:text-textc'
-              )}>
+            <button key={opt} disabled={submitted} onClick={() => !submitted && setSel(opt)}
+              className="px-4 py-3 rounded-xl text-left border transition-all"
+              style={{
+                fontSize:'15px',
+                background: submitted && opt === correct ? 'rgba(109,191,122,.12)' :
+                            submitted && opt === sel && !isCorrect ? 'rgba(192,68,90,.12)' :
+                            sel === opt ? 'rgba(201,154,46,.12)' : 'var(--c-card)',
+                borderColor: submitted && opt === correct ? 'rgba(109,191,122,.4)' :
+                             submitted && opt === sel && !isCorrect ? 'rgba(192,68,90,.4)' :
+                             sel === opt ? 'rgba(201,154,46,.45)' : 'var(--c-border)',
+                color: submitted && opt === correct ? '#6dbf7a' :
+                       submitted && opt === sel && !isCorrect ? '#e07a8e' :
+                       sel === opt ? '#c99a2e' : 'var(--c-text)',
+                fontWeight: submitted && opt === correct ? 600 : 400,
+              }}>
               {opt}
             </button>
           ))}
@@ -370,42 +557,52 @@ function StandardExercise({ ex }: { ex: any }) {
 
       {(ex.type === 'translate' || ex.type === 'fill') && (
         <div className="mb-4">
-          {ex.hint && !submitted && <p className="text-xs text-muted mb-2">Подсказка: {ex.hint}</p>}
+          {ex.hint && !submitted && (
+            <p style={{fontSize:'13px', color:'var(--c-muted)', marginBottom:'8px'}}>💡 {ex.hint}</p>
+          )}
           <input type="text" value={input} disabled={submitted}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !submitted && setSubmitted(true)}
             placeholder="Введите ответ..."
-            className={cn(
-              'w-full px-4 py-2.5 rounded-xl border text-[14px] focus:outline-none transition-all',
-              'bg-night/40 text-textc placeholder:text-muted',
-              submitted && isCorrect ? 'border-green-400/40' :
-              submitted ? 'border-rose/40' : 'border-rim focus:border-gold/40'
-            )}
+            style={{
+              width:'100%', padding:'10px 14px',
+              borderRadius:'10px',
+              border: `1px solid ${submitted && isCorrect ? 'rgba(109,191,122,.4)' : submitted ? 'rgba(192,68,90,.4)' : 'var(--c-border)'}`,
+              background: 'var(--c-bg)', color:'var(--c-text)', fontSize:'16px',
+              outline:'none',
+            }}
           />
           {submitted && !isCorrect && (
-            <p className="mt-2 text-[13px] text-green-400">Правильный ответ: <strong>{correct}</strong></p>
+            <p style={{marginTop:'8px', fontSize:'14px', color:'#6dbf7a'}}>
+              Правильный ответ: <strong>{correct}</strong>
+            </p>
           )}
         </div>
       )}
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         {!submitted ? (
           <button onClick={() => setSubmitted(true)}
-            disabled={!selected && !input.trim()}
-            className="px-5 py-2 rounded-lg text-[13px] font-semibold bg-gold text-night hover:bg-goldl transition-colors disabled:opacity-40">
+            disabled={!sel && !input.trim()}
+            style={{
+              padding:'8px 20px', borderRadius:'10px', fontSize:'14px', fontWeight:600,
+              background:'#c99a2e', color:'#111', cursor:'pointer',
+              opacity: (!sel && !input.trim()) ? 0.4 : 1,
+            }}>
             Проверить
           </button>
         ) : (
           <>
-            <div className={cn('text-[13px] font-semibold', isCorrect ? 'text-green-400' : 'text-rose')}>
+            <span style={{fontSize:'14px', fontWeight:600, color: isCorrect ? '#6dbf7a' : '#e07a8e'}}>
               {isCorrect ? '✓ Верно!' : '✗ Неверно'}
-            </div>
-            <button onClick={() => { setSubmitted(false); setSelected(''); setInput(''); setShowExp(false) }}
-              className="text-[13px] text-muted hover:text-textc transition-colors">
+            </span>
+            <button onClick={() => { setSubmitted(false); setSel(''); setInput(''); setShowExp(false) }}
+              style={{fontSize:'14px', color:'var(--c-muted)', background:'none', border:'none', cursor:'pointer'}}>
               Попробовать снова
             </button>
             {ex.explanation && (
-              <button onClick={() => setShowExp(p => !p)} className="text-[13px] text-gold hover:text-goldl transition-colors ml-auto">
+              <button onClick={() => setShowExp(p => !p)}
+                style={{fontSize:'14px', color:'#c99a2e', background:'none', border:'none', cursor:'pointer', marginLeft:'auto'}}>
                 {showExp ? 'Скрыть' : 'Почему?'}
               </button>
             )}
@@ -414,7 +611,7 @@ function StandardExercise({ ex }: { ex: any }) {
       </div>
 
       {showExp && ex.explanation && (
-        <div className="mt-4 pt-4 border-t border-rim/40 text-[13px] text-muted leading-relaxed">
+        <div style={{marginTop:'14px', paddingTop:'14px', borderTop:'1px solid var(--c-border)', fontSize:'14px', lineHeight:'1.7', color:'var(--c-soft)'}}>
           {ex.explanation}
         </div>
       )}
@@ -422,11 +619,13 @@ function StandardExercise({ ex }: { ex: any }) {
   )
 }
 
-// ─── Главный компонент ────────────────────────────────────────
-export function LessonContent({ lesson, module, userId, prev, next, isCompleted }: any) {
+// ═══════════════════════════════════════════════════════
+//  ГЛАВНЫЙ КОМПОНЕНТ
+// ═══════════════════════════════════════════════════════
+export function LessonContent({ lesson, module: mod, userId, prev, next, isCompleted }: any) {
   const [completed, setCompleted] = useState(isCompleted)
-  const [saving, setSaving]       = useState(false)
-  const [tab, setTab]             = useState<'lesson' | 'vocab' | 'exercises'>('lesson')
+  const [saving,    setSaving]    = useState(false)
+  const [tab,       setTab]       = useState<'lesson' | 'vocab' | 'exercises'>('lesson')
 
   async function handleComplete() {
     setSaving(true)
@@ -442,38 +641,44 @@ export function LessonContent({ lesson, module, userId, prev, next, isCompleted 
   }
 
   return (
-    <article className="w-full max-w-[720px] mx-auto">
-
+    <article>
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-[12px] text-muted mb-6">
-        <span className="text-gold font-semibold">Модуль {lesson.moduleId}</span>
+      <nav style={{display:'flex', gap:'8px', alignItems:'center', fontSize:'12px', color:'var(--c-muted)', marginBottom:'20px'}}>
+        <span style={{color:'#c99a2e', fontWeight:600}}>Модуль {lesson.moduleId}</span>
         <span>/</span>
-        <span className="truncate">{module?.title}</span>
+        <span>{mod?.title}</span>
       </nav>
 
       {/* Header */}
-      <header className="mb-8">
-        <div className="flex items-center flex-wrap gap-2 mb-3">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2.5 py-1 rounded-full">
+      <header style={{marginBottom:'28px'}}>
+        <div style={{display:'flex', gap:'8px', flexWrap:'wrap', marginBottom:'12px'}}>
+          <span style={{fontSize:'11px', fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', color:'#c99a2e', background:'rgba(201,154,46,.12)', padding:'3px 10px', borderRadius:'20px'}}>
             Урок {lesson.id}
           </span>
           {lesson.isFree && (
-            <span className="text-[11px] font-bold uppercase tracking-widest text-tealb bg-teal/10 px-2.5 py-1 rounded-full">
+            <span style={{fontSize:'11px', fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', color:'#3abfae', background:'rgba(46,158,143,.12)', padding:'3px 10px', borderRadius:'20px'}}>
               Бесплатно
             </span>
           )}
           {completed && (
-            <span className="text-[11px] font-bold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+            <span style={{fontSize:'11px', fontWeight:700, color:'#6dbf7a', background:'rgba(109,191,122,.12)', padding:'3px 10px', borderRadius:'20px'}}>
               ✓ Пройден
             </span>
           )}
         </div>
-        <h1 className="text-[clamp(26px,4vw,38px)] font-light text-bright leading-tight mb-2"
-          style={{fontFamily: 'var(--font-cormorant), Georgia, serif'}}>
-          {lesson.title}
-        </h1>
-        <p className="text-soft text-[15px]">{lesson.subtitle}</p>
-        <div className="flex items-center gap-5 mt-4 text-[12px] text-muted">
+
+        <h1 style={{
+          fontFamily:'var(--font-cormorant),Georgia,serif',
+          fontSize:'clamp(28px,4vw,40px)',
+          fontWeight:400,
+          color:'var(--c-heading)',
+          lineHeight:1.2,
+          marginBottom:'8px',
+        }}>{lesson.title}</h1>
+
+        <p style={{fontSize:'16px', color:'var(--c-soft)'}}>{lesson.subtitle}</p>
+
+        <div style={{display:'flex', gap:'20px', marginTop:'12px', fontSize:'13px', color:'var(--c-muted)'}}>
           <span>⏱ {lesson.duration}</span>
           <span>📚 {lesson.vocab.length} слов</span>
           <span>✍️ {lesson.exercises.length} заданий</span>
@@ -481,36 +686,35 @@ export function LessonContent({ lesson, module, userId, prev, next, isCompleted 
       </header>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 rounded-xl border border-rim bg-card mb-8">
+      <div style={{display:'flex', gap:'4px', padding:'4px', borderRadius:'14px', border:'1px solid var(--c-border)', background:'var(--c-card)', marginBottom:'28px'}}>
         {[
-          { key: 'lesson',    label: '📖 Урок' },
-          { key: 'vocab',     label: `📚 Словарь (${lesson.vocab.length})` },
-          { key: 'exercises', label: `✍️ Задания (${lesson.exercises.length})` },
+          { k: 'lesson',    label: `📖 Урок` },
+          { k: 'vocab',     label: `📚 Словарь (${lesson.vocab.length})` },
+          { k: 'exercises', label: `✍️ Задания (${lesson.exercises.length})` },
         ].map(t => (
-          <button key={t.key} onClick={() => setTab(t.key as any)}
-            className={cn(
-              'flex-1 py-2 px-3 rounded-lg text-[13px] font-medium transition-all',
-              tab === t.key
-                ? 'bg-gold text-night shadow-sm'
-                : 'text-soft hover:text-textc'
-            )}>
+          <button key={t.k} onClick={() => setTab(t.k as any)}
+            style={{
+              flex:1, padding:'8px 10px', borderRadius:'10px', fontSize:'14px', fontWeight:500,
+              background: tab === t.k ? '#c99a2e' : 'transparent',
+              color: tab === t.k ? '#111' : 'var(--c-soft)',
+              border: 'none', cursor:'pointer', transition:'all .2s',
+            }}>
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* Lesson Tab */}
+      {/* Lesson content */}
       {tab === 'lesson' && (
         <div>
           {lesson.sections.map((s: any, i: number) => <RenderSection key={i} s={s} />)}
-
           {lesson.summary.length > 0 && (
-            <div className="mb-8 p-6 rounded-2xl bg-card border border-rim">
-              <h2 className="text-[16px] font-semibold text-bright mb-4">📋 Итоги урока</h2>
-              <ul className="space-y-2">
+            <div style={{marginBottom:'28px', padding:'24px', borderRadius:'16px', background:'var(--c-card)', border:'1px solid var(--c-border)'}}>
+              <h2 style={{fontSize:'17px', fontWeight:600, color:'var(--c-heading)', marginBottom:'14px'}}>📋 Итоги урока</h2>
+              <ul style={{listStyle:'none', padding:0, margin:0}}>
                 {lesson.summary.map((p: string, i: number) => (
-                  <li key={i} className="flex items-start gap-3 text-[14px] text-soft">
-                    <span className="text-gold mt-0.5 shrink-0">✓</span>
+                  <li key={i} style={{display:'flex', gap:'10px', fontSize:'15px', lineHeight:'1.7', color:'var(--c-text)', marginBottom:'6px'}}>
+                    <span style={{color:'#c99a2e', marginTop:'1px', flexShrink:0}}>✓</span>
                     <span>{p}</span>
                   </li>
                 ))}
@@ -520,43 +724,46 @@ export function LessonContent({ lesson, module, userId, prev, next, isCompleted 
         </div>
       )}
 
-      {/* Vocab Tab */}
+      {/* Vocab tab */}
       {tab === 'vocab' && (
         <div>
-          <p className="text-[13px] text-muted mb-5">Нажмите на карточку чтобы увидеть перевод и пример</p>
+          <p style={{fontSize:'14px', color:'var(--c-muted)', marginBottom:'16px'}}>
+            Нажмите на карточку, чтобы увидеть перевод и пример из Нового Завета
+          </p>
           {lesson.vocab.length === 0 ? (
-            <div className="p-8 rounded-2xl bg-card border border-rim text-center text-muted">
-              Словарь для этого урока скоро будет добавлен.
+            <div style={{padding:'40px', textAlign:'center', color:'var(--c-muted)', background:'var(--c-card)', borderRadius:'16px', border:'1px solid var(--c-border)'}}>
+              Словарь для этого урока скоро будет добавлен
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {lesson.vocab.map((w: any, i: number) => <VocabCard key={i} w={w} index={i} />)}
+              {lesson.vocab.map((w: any, i: number) => <VocabCard key={i} w={w} />)}
             </div>
           )}
         </div>
       )}
 
-      {/* Exercises Tab */}
+      {/* Exercises tab */}
       {tab === 'exercises' && (
         <div>
           {lesson.exercises.length === 0 ? (
-            <div className="p-8 rounded-2xl bg-card border border-rim text-center text-muted">
-              Упражнения для этого урока скоро будут добавлены.
+            <div style={{padding:'40px', textAlign:'center', color:'var(--c-muted)', background:'var(--c-card)', borderRadius:'16px', border:'1px solid var(--c-border)'}}>
+              Упражнения для этого урока скоро будут добавлены
             </div>
           ) : (
-            <div className="space-y-5">
+            <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
               {lesson.exercises.map((ex: any, i: number) => (
                 <div key={i}>
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-muted mb-2">
+                  <div style={{fontSize:'11px', fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', color:'var(--c-muted)', marginBottom:'8px'}}>
                     Задание {i + 1} из {lesson.exercises.length}
                   </div>
-                  {ex.type === 'match'
-                    ? <div className="p-5 rounded-2xl border bg-card border-rim">
-                        <p className="text-[15px] font-semibold text-bright mb-4">{ex.question}</p>
-                        <MatchExercise ex={ex} />
-                      </div>
-                    : <StandardExercise ex={ex} />
-                  }
+                  {ex.type === 'match' ? (
+                    <div style={{padding:'20px', borderRadius:'16px', border:'1px solid var(--c-border)', background:'var(--c-card)'}}>
+                      <p style={{fontSize:'16px', fontWeight:600, color:'var(--c-heading)', marginBottom:'14px'}}>{ex.question}</p>
+                      <MatchExercise ex={ex} />
+                    </div>
+                  ) : (
+                    <StandardExercise ex={ex} />
+                  )}
                 </div>
               ))}
             </div>
@@ -564,41 +771,47 @@ export function LessonContent({ lesson, module, userId, prev, next, isCompleted 
         </div>
       )}
 
-      {/* Complete */}
+      {/* Complete button */}
       {!completed && (
-        <div className="mt-6 mb-10 p-5 rounded-2xl bg-card border border-rim text-center">
-          <p className="text-soft text-[14px] mb-4">Изучили материал? Отметьте урок как пройденный.</p>
+        <div style={{margin:'24px 0 32px', padding:'20px', borderRadius:'16px', background:'var(--c-card)', border:'1px solid var(--c-border)', textAlign:'center'}}>
+          <p style={{fontSize:'15px', color:'var(--c-soft)', marginBottom:'14px'}}>
+            Изучили материал? Отметьте урок как пройденный.
+          </p>
           <button onClick={handleComplete} disabled={saving}
-            className="px-8 py-3 rounded-xl font-semibold bg-gold text-night hover:bg-goldl transition-all disabled:opacity-50 text-[14px]">
+            style={{
+              padding:'10px 32px', borderRadius:'12px', fontSize:'15px', fontWeight:600,
+              background:'#c99a2e', color:'#111', border:'none', cursor:'pointer',
+              opacity: saving ? 0.5 : 1,
+            }}>
             {saving ? 'Сохраняем...' : '✓ Урок пройден'}
           </button>
         </div>
       )}
 
       {/* Navigation */}
-      <nav className="flex items-center justify-between gap-4 py-6 border-t border-rim">
+      <nav style={{display:'flex', justifyContent:'space-between', gap:'16px', paddingTop:'20px', borderTop:'1px solid var(--c-border)'}}>
         {prev ? (
           <Link href={`/lesson/${prev.id}`}
-            className="flex items-center gap-2 px-4 py-3 rounded-xl border border-rim text-[13px] text-soft hover:border-muted hover:text-textc transition-all">
+            style={{display:'flex', alignItems:'center', gap:'10px', padding:'12px 16px', borderRadius:'12px', border:'1px solid var(--c-border)', fontSize:'14px', color:'var(--c-soft)', textDecoration:'none', background:'var(--c-card)'}}>
             <span>←</span>
             <div>
-              <div className="text-[11px] text-muted">Предыдущий</div>
-              <div className="font-medium truncate max-w-[150px]">{prev.title}</div>
+              <div style={{fontSize:'11px', color:'var(--c-muted)'}}>Предыдущий</div>
+              <div style={{fontWeight:500, maxWidth:'150px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{prev.title}</div>
             </div>
           </Link>
         ) : <div />}
         {next ? (
           <Link href={`/lesson/${next.id}`}
-            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-gold text-night text-[13px] font-semibold hover:bg-goldl transition-all">
-            <div className="text-right">
-              <div className="text-[11px] text-night/60">Следующий</div>
-              <div className="truncate max-w-[150px]">{next.title}</div>
+            style={{display:'flex', alignItems:'center', gap:'10px', padding:'12px 16px', borderRadius:'12px', fontSize:'14px', fontWeight:600, color:'#111', textDecoration:'none', background:'#c99a2e'}}>
+            <div style={{textAlign:'right'}}>
+              <div style={{fontSize:'11px', opacity:0.7}}>Следующий</div>
+              <div style={{maxWidth:'150px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{next.title}</div>
             </div>
             <span>→</span>
           </Link>
         ) : (
           <Link href="/dashboard"
-            className="px-4 py-3 rounded-xl bg-gold text-night text-[13px] font-semibold hover:bg-goldl transition-all">
+            style={{padding:'12px 20px', borderRadius:'12px', fontSize:'14px', fontWeight:600, color:'#111', textDecoration:'none', background:'#c99a2e'}}>
             В кабинет →
           </Link>
         )}
