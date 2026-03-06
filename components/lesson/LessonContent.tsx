@@ -508,6 +508,569 @@ function MatchExercise({ ex }: { ex: any }) {
   )
 }
 
+
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — АНАЛИЗ ФОРМ (по тетради Маунса)
+// ═══════════════════════════════════════════════════════
+function ParseExercise({ ex }: { ex: any }) {
+  const CASES = ['Им.', 'Род.', 'Дат.', 'Вин.', 'Зват.']
+  const NUMBERS = ['Ед.', 'Мн.']
+  const GENDERS = ['М', 'Ж', 'Ср']
+  
+  const forms = ex.forms ?? []
+  const [answers, setAnswers] = useState<Record<number, any>>({})
+  const [checked, setChecked] = useState<Record<number, boolean>>({})
+  const [allDone, setAllDone] = useState(false)
+
+  function setField(i: number, field: string, val: string) {
+    setAnswers(prev => ({ ...prev, [i]: { ...(prev[i] || {}), [field]: val } }))
+    setChecked(prev => ({ ...prev, [i]: false }))
+  }
+
+  function checkForm(i: number) {
+    setChecked(prev => ({ ...prev, [i]: true }))
+    // Check if all done
+    const allChecked = forms.every((_: any, idx: number) => idx === i ? true : checked[idx])
+    if (allChecked) setAllDone(true)
+  }
+
+  function isCorrect(i: number) {
+    const a = answers[i] || {}
+    const c = forms[i]
+    return a.case === c.case && a.number === c.number && a.gender === c.gender
+  }
+
+  function checkAll() {
+    const newChecked: Record<number,boolean> = {}
+    forms.forEach((_: any, i: number) => { newChecked[i] = true })
+    setChecked(newChecked)
+    setAllDone(true)
+  }
+
+  return (
+    <div>
+      <p style={{fontSize:'13px', color:'var(--c-muted)', marginBottom:'12px'}}>
+        Определите падеж, число и род каждой формы
+      </p>
+      <div className="space-y-3">
+        {forms.map((form: any, i: number) => {
+          const isDone = checked[i]
+          const ok = isDone && isCorrect(i)
+          const fail = isDone && !isCorrect(i)
+          return (
+            <div key={i} style={{
+              padding:'14px 16px', borderRadius:'14px', border:'1px solid',
+              borderColor: ok ? 'rgba(109,191,122,.35)' : fail ? 'rgba(192,68,90,.3)' : 'var(--c-border)',
+              background: ok ? 'rgba(109,191,122,.05)' : fail ? 'rgba(192,68,90,.05)' : 'var(--c-card)',
+            }}>
+              <div style={{display:'flex', alignItems:'flex-start', gap:'12px', flexWrap:'wrap'}}>
+                {/* Greek form */}
+                <div style={{
+                  fontFamily:'var(--font-cormorant),Georgia,serif',
+                  fontSize:'22px', color:'var(--c-heading)', fontWeight:500,
+                  minWidth:'110px', paddingTop:'2px',
+                }}>
+                  {form.form}
+                </div>
+                {/* Selectors */}
+                <div style={{display:'flex', gap:'8px', flexWrap:'wrap', flex:1}}>
+                  {/* Case */}
+                  <div>
+                    <div style={{fontSize:'10px', color:'var(--c-muted)', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.06em'}}>Падеж</div>
+                    <div style={{display:'flex', gap:'3px', flexWrap:'wrap'}}>
+                      {CASES.map(c => (
+                        <button key={c} disabled={isDone}
+                          onClick={() => setField(i, 'case', c)}
+                          style={{
+                            padding:'3px 7px', borderRadius:'6px', fontSize:'12px',
+                            border:'1px solid',
+                            borderColor: (answers[i]?.case === c) ? '#c99a2e' : 'var(--c-border)',
+                            background: (answers[i]?.case === c) ? 'rgba(201,154,46,.15)' : 'transparent',
+                            color: (answers[i]?.case === c) ? '#c99a2e' : 'var(--c-soft)',
+                            cursor: isDone ? 'default' : 'pointer',
+                          }}>
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Number */}
+                  <div>
+                    <div style={{fontSize:'10px', color:'var(--c-muted)', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.06em'}}>Число</div>
+                    <div style={{display:'flex', gap:'3px'}}>
+                      {NUMBERS.map(n => (
+                        <button key={n} disabled={isDone}
+                          onClick={() => setField(i, 'number', n)}
+                          style={{
+                            padding:'3px 9px', borderRadius:'6px', fontSize:'12px',
+                            border:'1px solid',
+                            borderColor: (answers[i]?.number === n) ? '#3abfae' : 'var(--c-border)',
+                            background: (answers[i]?.number === n) ? 'rgba(46,158,143,.12)' : 'transparent',
+                            color: (answers[i]?.number === n) ? '#3abfae' : 'var(--c-soft)',
+                            cursor: isDone ? 'default' : 'pointer',
+                          }}>
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Gender */}
+                  <div>
+                    <div style={{fontSize:'10px', color:'var(--c-muted)', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.06em'}}>Род</div>
+                    <div style={{display:'flex', gap:'3px'}}>
+                      {GENDERS.map(g => (
+                        <button key={g} disabled={isDone}
+                          onClick={() => setField(i, 'gender', g)}
+                          style={{
+                            padding:'3px 9px', borderRadius:'6px', fontSize:'12px',
+                            border:'1px solid',
+                            borderColor: (answers[i]?.gender === g) ? '#5b6ef5' : 'var(--c-border)',
+                            background: (answers[i]?.gender === g) ? 'rgba(91,110,245,.12)' : 'transparent',
+                            color: (answers[i]?.gender === g) ? '#7c8ef8' : 'var(--c-soft)',
+                            cursor: isDone ? 'default' : 'pointer',
+                          }}>
+                          {g}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Check button */}
+                  {!isDone ? (
+                    <div style={{display:'flex', alignItems:'flex-end', paddingBottom:'2px'}}>
+                      <button onClick={() => checkForm(i)}
+                        disabled={!answers[i]?.case || !answers[i]?.number || !answers[i]?.gender}
+                        style={{
+                          padding:'4px 12px', borderRadius:'8px', fontSize:'12px',
+                          background:'var(--c-border)', color:'var(--c-text)',
+                          border:'none', cursor:'pointer', opacity: (!answers[i]?.case || !answers[i]?.number || !answers[i]?.gender) ? 0.4 : 1,
+                        }}>
+                        ✓
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{display:'flex', alignItems:'flex-end', paddingBottom:'4px'}}>
+                      {ok ? (
+                        <span style={{fontSize:'13px', color:'#6dbf7a', fontWeight:600}}>✓</span>
+                      ) : (
+                        <span style={{fontSize:'12px', color:'#e07a8e'}}>
+                          → {form.case} {form.number} {form.gender}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Lexical form + meaning shown after check */}
+              {isDone && (
+                <div style={{marginTop:'8px', paddingTop:'8px', borderTop:'1px solid var(--c-border)', display:'flex', gap:'16px', fontSize:'13px'}}>
+                  <span style={{color:'var(--c-muted)'}}>Лекс. форма:</span>
+                  <span style={{fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'16px', color:'var(--c-heading)'}}>{form.lexical}</span>
+                  <span style={{color:'var(--c-muted)', marginLeft:'4px'}}>= {form.meaning}</span>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {!allDone && forms.length > 2 && (
+        <button onClick={checkAll} style={{
+          marginTop:'12px', padding:'6px 16px', borderRadius:'10px', fontSize:'12px',
+          background:'transparent', color:'var(--c-muted)',
+          border:'1px solid var(--c-border)', cursor:'pointer',
+        }}>
+          Показать все ответы
+        </button>
+      )}
+      {allDone && (
+        <div style={{marginTop:'12px', padding:'10px 14px', borderRadius:'10px', background:'rgba(109,191,122,.08)', border:'1px solid rgba(109,191,122,.25)', fontSize:'13px', color:'#6dbf7a'}}>
+          ✓ Анализ завершён. Проверьте лексические формы в словаре урока.
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — ПЕРЕВОД ПРЕДЛОЖЕНИЙ (стихи НЗ)
+// ═══════════════════════════════════════════════════════
+function TranslateNTExercise({ ex }: { ex: any }) {
+  const [input, setInput] = useState('')
+  const [show,  setShow]  = useState(false)
+
+  return (
+    <div style={{padding:'18px', borderRadius:'16px', border:'1px solid var(--c-border)', background:'var(--c-card)'}}>
+      {ex.source && (
+        <div style={{fontSize:'11px', fontWeight:700, letterSpacing:'0.08em', color:'#c99a2e', textTransform:'uppercase', marginBottom:'8px'}}>
+          {ex.source}
+        </div>
+      )}
+      {/* Greek sentence */}
+      <div style={{
+        fontFamily:'var(--font-cormorant),Georgia,serif',
+        fontSize:'20px', lineHeight:'1.6', color:'var(--c-heading)',
+        letterSpacing:'0.01em', marginBottom:'14px',
+      }}>
+        {ex.greek}
+      </div>
+      {/* Hints */}
+      {ex.hints && ex.hints.length > 0 && (
+        <div style={{display:'flex', gap:'6px', flexWrap:'wrap', marginBottom:'12px'}}>
+          {ex.hints.map((h: string, i: number) => (
+            <span key={i} style={{
+              fontSize:'11px', padding:'2px 8px', borderRadius:'12px',
+              background:'var(--c-bg)', border:'1px solid var(--c-border)',
+              color:'var(--c-muted)', fontFamily:'var(--font-cormorant),Georgia,serif',
+              fontSize:'13px',
+            }}>{h}</span>
+          ))}
+        </div>
+      )}
+      {/* Translation input */}
+      <textarea
+        value={input} onChange={e => setInput(e.target.value)}
+        disabled={show}
+        rows={2}
+        placeholder="Ваш перевод..."
+        style={{
+          width:'100%', padding:'10px 14px', borderRadius:'10px',
+          border:'1px solid var(--c-border)',
+          background:'var(--c-bg)', color:'var(--c-text)', fontSize:'15px',
+          lineHeight:'1.6', resize:'vertical', outline:'none', marginBottom:'10px',
+        }}
+      />
+      <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
+        {!show ? (
+          <button onClick={() => setShow(true)}
+            style={{
+              padding:'7px 18px', borderRadius:'10px', fontSize:'13px', fontWeight:600,
+              background:'rgba(201,154,46,.15)', color:'#c99a2e',
+              border:'1px solid rgba(201,154,46,.35)', cursor:'pointer',
+            }}>
+            Показать перевод
+          </button>
+        ) : (
+          <>
+            <button onClick={() => { setShow(false); setInput('') }}
+              style={{fontSize:'13px', color:'var(--c-muted)', background:'none', border:'none', cursor:'pointer'}}>
+              Попробовать снова
+            </button>
+          </>
+        )}
+      </div>
+      {show && (
+        <div style={{
+          marginTop:'12px', padding:'12px 16px', borderRadius:'12px',
+          background:'rgba(109,191,122,.07)', border:'1px solid rgba(109,191,122,.25)',
+        }}>
+          <div style={{fontSize:'11px', color:'#6dbf7a', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'4px'}}>
+            Перевод
+          </div>
+          <div style={{fontSize:'16px', lineHeight:'1.7', color:'var(--c-text)'}}>{ex.answer}</div>
+          {ex.note && (
+            <div style={{marginTop:'8px', fontSize:'13px', color:'var(--c-muted)', fontStyle:'italic'}}>{ex.note}</div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — ГРАММАТИЧЕСКИЙ РАЗБОР (АНАЛИЗ)
+// ═══════════════════════════════════════════════════════
+function ParseExercise({ ex }: { ex: any }) {
+  const fields = [
+    { key: 'case',    label: 'Падеж',        opts: ['Именительный','Родительный','Дательный','Винительный','Звательный'] },
+    { key: 'number',  label: 'Число',        opts: ['ед.','мн.'] },
+    { key: 'gender',  label: 'Род',          opts: ['муж.','жен.','ср.','—'] },
+    { key: 'lexical', label: 'Лекс. форма',  opts: null },
+    { key: 'meaning', label: 'Значение',     opts: null },
+  ]
+  const [values,  setValues]  = useState<Record<string,string>>({})
+  const [checked, setChecked] = useState(false)
+  const [showHint,setShowHint]= useState(false)
+
+  const norm = (s: string) => s.toLowerCase().trim().replace(/ё/g,'е')
+  const isFieldOk = (key: string) => {
+    const ans = norm(ex.answer[key] || '')
+    const val = norm(values[key] || '')
+    return val !== '' && (val === ans || ans.split('/').some((a:string) => norm(a) === val))
+  }
+  const allFilled  = fields.every(f => (values[f.key]||'').trim() !== '')
+  const allCorrect = checked && fields.every(f => isFieldOk(f.key))
+
+  return (
+    <div className="rounded-2xl border overflow-hidden" style={{borderColor:'var(--c-border)'}}>
+      <div className="px-6 py-5 text-center border-b" style={{background:'var(--c-card)', borderColor:'var(--c-border)'}}>
+        <div style={{fontSize:'11px', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--c-muted)', marginBottom:'6px'}}>
+          Разберите форму
+        </div>
+        <div style={{fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'44px', color:'var(--c-heading)', fontWeight:400, letterSpacing:'0.03em', lineHeight:1.1}}>
+          {ex.form}
+        </div>
+        {ex.context && <div style={{fontSize:'13px', color:'var(--c-muted)', marginTop:'6px', fontStyle:'italic'}}>{ex.context}</div>}
+      </div>
+      <div className="p-5" style={{background:'var(--c-bg)'}}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          {fields.map(f => {
+            const ok    = checked && isFieldOk(f.key)
+            const wrong = checked && !isFieldOk(f.key) && (values[f.key]||'').trim() !== ''
+            const style = {
+              width:'100%', padding:'8px 12px', borderRadius:'8px', fontSize:'14px',
+              border:`1px solid ${ok ? 'rgba(109,191,122,.4)' : wrong ? 'rgba(192,68,90,.4)' : 'var(--c-border)'}`,
+              background: ok ? 'rgba(109,191,122,.06)' : wrong ? 'rgba(192,68,90,.06)' : 'var(--c-surface)',
+              color: ok ? '#6dbf7a' : wrong ? '#e07a8e' : 'var(--c-text)',
+              outline:'none',
+            }
+            return (
+              <div key={f.key}>
+                <label style={{fontSize:'11px', fontWeight:600, color:'var(--c-muted)', letterSpacing:'0.06em', textTransform:'uppercase', display:'block', marginBottom:'4px'}}>
+                  {f.label}
+                </label>
+                {f.opts ? (
+                  <select value={values[f.key]||''} disabled={checked}
+                    onChange={e => setValues(p=>({...p,[f.key]:e.target.value}))}
+                    style={style}>
+                    <option value="">— выберите —</option>
+                    {f.opts.map((o:string) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                ) : (
+                  <input type="text" value={values[f.key]||''} disabled={checked}
+                    placeholder={f.key==='lexical' ? 'словарная форма...' : 'перевод...'}
+                    onChange={e => setValues(p=>({...p,[f.key]:e.target.value}))}
+                    style={style}/>
+                )}
+                {checked && wrong && (
+                  <div style={{fontSize:'12px', color:'#6dbf7a', marginTop:'2px'}}>✓ {ex.answer[f.key]}</div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        {checked && (
+          <div className="mb-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-center"
+            style={{
+              background: allCorrect ? 'rgba(109,191,122,.08)' : 'rgba(201,154,46,.08)',
+              border:`1px solid ${allCorrect ? 'rgba(109,191,122,.3)' : 'rgba(201,154,46,.3)'}`,
+              color: allCorrect ? '#6dbf7a' : '#c99a2e',
+            }}>
+            {allCorrect ? '✓ Отличный разбор!' : 'Ошибки выделены красным — правильные ответы показаны зелёным'}
+          </div>
+        )}
+        {(showHint || checked) && ex.explanation && (
+          <div style={{fontSize:'13px', lineHeight:'1.7', color:'var(--c-soft)', padding:'12px', borderRadius:'10px', background:'var(--c-card)', border:'1px solid var(--c-border)', marginBottom:'12px'}}>
+            💡 {ex.explanation}
+          </div>
+        )}
+        <div className="flex gap-2 flex-wrap">
+          {!checked ? (
+            <>
+              <button onClick={() => setChecked(true)} disabled={!allFilled}
+                style={{padding:'8px 20px', borderRadius:'10px', fontSize:'14px', fontWeight:600, background:'#c99a2e', color:'#111', border:'none', cursor:'pointer', opacity:allFilled?1:0.4}}>
+                Проверить
+              </button>
+              {ex.explanation && (
+                <button onClick={()=>setShowHint(p=>!p)}
+                  style={{padding:'8px 14px', borderRadius:'10px', fontSize:'13px', color:'var(--c-muted)', background:'none', border:'1px solid var(--c-border)', cursor:'pointer'}}>
+                  {showHint ? 'Скрыть подсказку' : '💡 Подсказка'}
+                </button>
+              )}
+            </>
+          ) : (
+            <button onClick={() => {setValues({});setChecked(false);setShowHint(false)}}
+              style={{padding:'8px 14px', borderRadius:'10px', fontSize:'13px', color:'var(--c-muted)', background:'none', border:'1px solid var(--c-border)', cursor:'pointer'}}>
+              ↺ Снова
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — ПЕРЕВОД ФРАЗЫ (РАЗМИНКА)
+// ═══════════════════════════════════════════════════════
+function PhraseExercise({ ex }: { ex: any }) {
+  const [input,   setInput]   = useState('')
+  const [checked, setChecked] = useState(false)
+  const [showAns, setShowAns] = useState(false)
+
+  const answers: string[] = Array.isArray(ex.answer) ? ex.answer : [ex.answer]
+  const norm = (s: string) => s.toLowerCase().trim().replace(/[.!?,;]/g,'').replace(/ё/g,'е').replace(/\s+/g,' ')
+  const isCorrect = checked && answers.some(a => norm(input) === norm(a))
+
+  return (
+    <div className="p-5 rounded-2xl border" style={{
+      background: checked ? (isCorrect ? 'rgba(109,191,122,.04)' : 'rgba(201,154,46,.04)') : 'var(--c-card)',
+      borderColor: checked ? (isCorrect ? 'rgba(109,191,122,.3)' : 'rgba(201,154,46,.25)') : 'var(--c-border)',
+    }}>
+      <div style={{fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'24px', color:'var(--c-heading)', marginBottom:'4px', letterSpacing:'0.02em', lineHeight:1.4}}>
+        {ex.form || ex.question}
+      </div>
+      {ex.source && <div style={{fontSize:'11px', color:'var(--c-muted)', marginBottom:'10px'}}>{ex.source}</div>}
+      {ex.hint && !checked && (
+        <div style={{fontSize:'13px', color:'var(--c-muted)', marginBottom:'10px', fontStyle:'italic'}}>
+          💡 Подсказка: {ex.hint}
+        </div>
+      )}
+      <input type="text" value={input} disabled={checked||showAns}
+        onChange={e => setInput(e.target.value)}
+        onKeyDown={e => e.key==='Enter' && !checked && input.trim() && setChecked(true)}
+        placeholder="Переведите на русский..."
+        style={{
+          width:'100%', padding:'10px 14px', borderRadius:'10px', fontSize:'15px',
+          border:`1px solid ${checked&&isCorrect ? 'rgba(109,191,122,.4)' : checked&&!isCorrect ? 'rgba(192,68,90,.3)' : 'var(--c-border)'}`,
+          background:'var(--c-bg)', color:'var(--c-text)', outline:'none', marginBottom:'10px',
+        }}/>
+      {checked && !isCorrect && (
+        <div style={{fontSize:'14px', marginBottom:'8px'}}>
+          <span style={{color:'var(--c-muted)'}}>Возможный перевод: </span>
+          <span style={{color:'#6dbf7a', fontWeight:500}}>{answers[0]}</span>
+        </div>
+      )}
+      {checked && isCorrect && <div style={{fontSize:'14px', color:'#6dbf7a', fontWeight:600, marginBottom:'8px'}}>✓ Верно!</div>}
+      {ex.note && (checked||showAns) && (
+        <div style={{fontSize:'13px', color:'var(--c-soft)', lineHeight:'1.7', padding:'10px', borderRadius:'8px', background:'var(--c-surface)', border:'1px solid var(--c-border)', marginBottom:'8px'}}>
+          📖 {ex.note}
+        </div>
+      )}
+      <div className="flex gap-2">
+        {!checked && !showAns ? (
+          <>
+            <button onClick={() => setChecked(true)} disabled={!input.trim()}
+              style={{padding:'7px 18px', borderRadius:'9px', fontSize:'13px', fontWeight:600, background:'#c99a2e', color:'#111', border:'none', cursor:'pointer', opacity:input.trim()?1:0.4}}>
+              Проверить
+            </button>
+            <button onClick={() => setShowAns(true)}
+              style={{padding:'7px 14px', borderRadius:'9px', fontSize:'13px', color:'var(--c-muted)', background:'none', border:'1px solid var(--c-border)', cursor:'pointer'}}>
+              Показать ответ
+            </button>
+          </>
+        ) : (
+          <button onClick={() => {setInput('');setChecked(false);setShowAns(false)}}
+            style={{padding:'7px 14px', borderRadius:'9px', fontSize:'13px', color:'var(--c-muted)', background:'none', border:'1px solid var(--c-border)', cursor:'pointer'}}>
+            ↺ Попробовать снова
+          </button>
+        )}
+      </div>
+      {showAns && <div style={{marginTop:'8px', fontSize:'14px', color:'#6dbf7a'}}>Перевод: {answers[0]}</div>}
+    </div>
+  )
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — МОРФОЛОГИЧЕСКИЙ АНАЛИЗ (из тетради Маунса)
+// ═══════════════════════════════════════════════════════
+function AnalysisExercise({ ex }: { ex: any }) {
+  const words: string[] = ex.words ?? []
+  const answers: any[] = ex.answers ?? []
+  const [revealed, setRevealed] = useState<Record<number, boolean>>({})
+
+  return (
+    <div>
+      <p style={{fontSize:'14px', color:'var(--c-muted)', marginBottom:'12px'}}>
+        Определите падеж, число, род, лексическую форму и значение каждого слова. Нажмите строку, чтобы проверить ответ.
+      </p>
+      <div className="rounded-xl overflow-hidden border" style={{borderColor:'var(--c-border)'}}>
+        <table style={{width:'100%', borderCollapse:'collapse', fontSize:'14px'}}>
+          <thead>
+            <tr style={{background:'var(--c-table-head)'}}>
+              {['Форма','Падеж','Число','Род','Лекс. форма','Значение'].map(h => (
+                <th key={h} style={{padding:'9px 12px', textAlign:'left', fontSize:'11px', fontWeight:700, letterSpacing:'0.07em', textTransform:'uppercase', color:'var(--c-muted)', borderBottom:'2px solid var(--c-border)'}}>
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {words.map((word, i) => {
+              const ans = answers[i] ?? {}
+              const isRevealed = revealed[i]
+              return (
+                <tr key={i}
+                  onClick={() => setRevealed(prev => ({...prev, [i]: !prev[i]}))}
+                  style={{
+                    background: i % 2 === 0 ? 'var(--c-table-row)' : 'var(--c-table-alt)',
+                    borderBottom: '1px solid var(--c-border)',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'color-mix(in srgb, var(--c-border) 40%, transparent)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'var(--c-table-row)' : 'var(--c-table-alt)')}
+                >
+                  <td style={{padding:'10px 12px', fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'18px', color:'var(--c-heading)', fontWeight:500}}>
+                    {word}
+                  </td>
+                  {isRevealed ? (
+                    <>
+                      <td style={{padding:'10px 12px', color:'#3abfae', fontWeight:500}}>{ans.case ?? '—'}</td>
+                      <td style={{padding:'10px 12px', color:'var(--c-text)'}}>{ans.number ?? '—'}</td>
+                      <td style={{padding:'10px 12px', color:'var(--c-text)'}}>{ans.gender ?? '—'}</td>
+                      <td style={{padding:'10px 12px', fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'16px', color:'#c99a2e'}}>{ans.lexical ?? '—'}</td>
+                      <td style={{padding:'10px 12px', color:'var(--c-text)'}}>{ans.meaning ?? '—'}</td>
+                    </>
+                  ) : (
+                    <>
+                      {[0,1,2,3,4].map(j => (
+                        <td key={j} style={{padding:'10px 12px'}}>
+                          <div style={{height:'14px', borderRadius:'3px', background:'var(--c-border)', width: j===3 ? '80px' : j===4 ? '60px' : '50px', opacity:0.6}} />
+                        </td>
+                      ))}
+                    </>
+                  )}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p style={{fontSize:'11px', color:'var(--c-muted)', marginTop:'8px'}}>
+        👆 Нажмите на строку, чтобы показать/скрыть ответ
+      </p>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
+//  УПРАЖНЕНИЕ — ПЕРЕВОД ФРАЗ (Разминка из тетради)
+// ═══════════════════════════════════════════════════════
+function PhrasesExercise({ ex }: { ex: any }) {
+  const pairs: {greek: string, russian: string}[] = ex.pairs ?? []
+  const [revealed, setRevealed] = useState<Record<number, boolean>>({})
+
+  return (
+    <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+      <p style={{fontSize:'14px', color:'var(--c-muted)', marginBottom:'4px'}}>
+        Переведите фразы с греческого на русский. Нажмите, чтобы проверить.
+      </p>
+      {pairs.map(({greek, russian}, i) => (
+        <div key={i}
+          onClick={() => setRevealed(prev => ({...prev, [i]: !prev[i]}))}
+          style={{
+            display:'flex', alignItems:'center', justifyContent:'space-between',
+            padding:'12px 16px', borderRadius:'12px', border:'1px solid var(--c-border)',
+            background: revealed[i] ? 'rgba(201,154,46,.05)' : 'var(--c-card)',
+            cursor:'pointer', transition:'all .15s', gap:'16px',
+            borderColor: revealed[i] ? 'rgba(201,154,46,.3)' : 'var(--c-border)',
+          }}>
+          <span style={{fontFamily:'var(--font-cormorant),Georgia,serif', fontSize:'19px', color:'var(--c-heading)', letterSpacing:'0.02em', flex:1}}>
+            {greek}
+          </span>
+          {revealed[i] ? (
+            <span style={{fontSize:'15px', color:'#c99a2e', fontWeight:500, textAlign:'right', flex:1}}>
+              {russian}
+            </span>
+          ) : (
+            <span style={{fontSize:'12px', color:'var(--c-muted)', fontStyle:'italic'}}>нажмите →</span>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ═══════════════════════════════════════════════════════
 //  СТАНДАРТНОЕ УПРАЖНЕНИЕ
 // ═══════════════════════════════════════════════════════
@@ -761,6 +1324,10 @@ export function LessonContent({ lesson, module: mod, userId, prev, next, isCompl
                       <p style={{fontSize:'16px', fontWeight:600, color:'var(--c-heading)', marginBottom:'14px'}}>{ex.question}</p>
                       <MatchExercise ex={ex} />
                     </div>
+                  ) : ex.type === 'parse' ? (
+                    <ParseExercise ex={ex} />
+                  ) : ex.type === 'phrase' ? (
+                    <PhraseExercise ex={ex} />
                   ) : (
                     <StandardExercise ex={ex} />
                   )}
