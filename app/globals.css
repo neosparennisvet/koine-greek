@@ -2,42 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════
+   ТЕМА: CSS переменные — тёмная (по умолчанию)
+═══════════════════════════════════════════════════ */
+:root {
+  --c-bg:      #111318;
+  --c-surface: #171a22;
+  --c-card:    #1e2230;
+  --c-border:  #2e344a;
+  --c-muted:   #52597a;
+  --c-soft:    #8892aa;
+  --c-text:    #ccd4e8;
+  --c-heading: #eef2ff;
+
+  scroll-behavior: smooth;
+}
+
+/* ═══════════════════════════════════════════════════
+   ТЕМА: Светлая
+═══════════════════════════════════════════════════ */
+[data-theme="light"] {
+  --c-bg:      #f5f3ef;
+  --c-surface: #ffffff;
+  --c-card:    #faf9f6;
+  --c-border:  #e2ddd4;
+  --c-muted:   #9e9587;
+  --c-soft:    #5a5248;
+  --c-text:    #2d2820;
+  --c-heading: #1a1510;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c8c0b0; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #a89880; }
+
+/* ═══════════════════════════════════════════════════
+   БАЗОВЫЕ СТИЛИ
+═══════════════════════════════════════════════════ */
 @layer base {
-  :root {
-    scroll-behavior: smooth;
+  body {
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    transition: background-color 0.3s ease, color 0.2s ease;
   }
 
   ::selection {
-    background: rgba(212, 168, 67, 0.25);
-    color: #f0c96a;
+    background: rgba(201,154,46,.3);
+    color: var(--c-heading);
   }
 
-  ::-webkit-scrollbar       { width: 6px; }
+  ::-webkit-scrollbar       { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #2a3045; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: #2e344a; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #4a5270; }
 }
 
+/* ═══════════════════════════════════════════════════
+   УТИЛИТЫ
+═══════════════════════════════════════════════════ */
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  /* Greek serif shorthand */
   .font-greek {
-    font-family: var(--font-cormorant), Georgia, serif;
+    font-family: var(--font-cormorant), 'Georgia', serif;
   }
 
-  /* Glow utilities */
-  .glow-gold { box-shadow: 0 0 40px rgba(212,168,67,.2); }
-  .glow-teal { box-shadow: 0 0 40px rgba(58,158,143,.2); }
-
-  /* Gradient borders */
-  .border-gradient-gold {
-    border-image: linear-gradient(90deg, transparent, #d4a843, transparent) 1;
+  /* Хорошая читаемость греческих букв */
+  .greek-text {
+    font-family: var(--font-cormorant), 'Georgia', serif;
+    font-size: 1.15em;
+    color: var(--c-heading);
+    letter-spacing: 0.02em;
   }
+
+  .glow-gold { box-shadow: 0 0 40px rgba(201,154,46,.18); }
+  .glow-teal { box-shadow: 0 0 40px rgba(46,158,143,.18); }
 }
 
+/* ═══════════════════════════════════════════════════
+   КОМПОНЕНТЫ
+═══════════════════════════════════════════════════ */
 @layer components {
-  /* Fade-in on scroll */
   .fade-up {
     opacity: 0;
     transform: translateY(20px);
@@ -48,19 +92,42 @@
     transform: translateY(0);
   }
 
-  /* Greek anatomy colors */
-  .greek-stem    { color: #7c8ef8; }
-  .greek-ending  { color: #d4a843; }
-
-  /* Badge variants */
+  /* Падежные бейджи */
   .badge-nom { @apply bg-indigo/15 text-indigol text-xs font-bold px-2 py-0.5 rounded-full; }
   .badge-acc { @apply bg-gold/15 text-gold text-xs font-bold px-2 py-0.5 rounded-full; }
   .badge-gen { @apply bg-rose/15 text-rose text-xs font-bold px-2 py-0.5 rounded-full; }
   .badge-dat { @apply bg-teal/15 text-tealb text-xs font-bold px-2 py-0.5 rounded-full; }
-  .badge-sg  { @apply bg-teal/10 text-tealb text-xs font-bold px-2 py-0.5 rounded-full; }
-  .badge-pl  { @apply text-[#b070f8] text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(150,80,220,.12); }
+
+  /* Греческий стем/окончание */
+  .greek-stem    { color: #5b6ef5; font-weight: 600; }
+  .greek-ending  { color: #c99a2e; font-weight: 700; }
 }
 
-/* Dashboard: отступ под сайдбар, кроме страниц уроков */
+/* ═══════════════════════════════════════════════════
+   ДАШБОРД ЛЕЙАУТ
+═══════════════════════════════════════════════════ */
 .dashboard-main { margin-left: 260px; }
-[data-lesson-page] .dashboard-main { margin-left: 0; }
+
+/* ═══════════════════════════════════════════════════
+   УРОК — читаемость контента
+═══════════════════════════════════════════════════ */
+.lesson-prose {
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.lesson-prose strong {
+  color: var(--c-heading);
+  font-weight: 600;
+}
+
+/* Светлая тема: улучшенный контраст для таблиц */
+[data-theme="light"] table th {
+  background: rgba(0,0,0,0.04);
+}
+[data-theme="light"] table tr:nth-child(even) {
+  background: rgba(0,0,0,0.02);
+}
+
+/* Анимация переключения темы */
+* { transition: background-color 0.25s ease, border-color 0.25s ease; }

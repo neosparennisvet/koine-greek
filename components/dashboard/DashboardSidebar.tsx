@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn, getInitials } from '@/lib/utils'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { createClient } from '@/lib/supabase-browser'
 import type { Profile } from '@/types'
 
@@ -78,9 +79,12 @@ export function DashboardSidebar({ profile }: { profile: Profile | null }) {
 
       {/* Bottom */}
       <div className="px-3 py-4 border-t border-rim space-y-1">
-        <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-soft hover:bg-card/60 hover:text-textc transition-all">
-          <span>⚙️</span> Настройки
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-soft hover:bg-card/60 hover:text-textc transition-all flex-1">
+            <span>⚙️</span> Настройки
+          </Link>
+          <ThemeToggle />
+        </div>
         <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-soft hover:bg-card/60 hover:text-rose transition-all w-full text-left">
           <span>↩️</span> Выйти
         </button>
