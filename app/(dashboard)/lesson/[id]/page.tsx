@@ -37,7 +37,7 @@ export default async function LessonPage({ params }: Props) {
   const module_ = getModuleByLessonId(lesson.id)
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#0a0c14' }}>
+    <div className="flex min-h-screen" style={{ background: 'var(--c-bg)' }}>
       <LessonSidebar
         modules={COURSE_MODULES as any}
         currentLessonId={lesson.id}
