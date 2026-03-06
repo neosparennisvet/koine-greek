@@ -36,7 +36,7 @@ export function LessonSidebar({ modules, currentLessonId, completedIds, totalLes
 
   return (
     <aside
-      className="fixed left-0 top-0 h-full w-[300px] flex flex-col z-30 overflow-hidden"
+      className="fixed left-0 top-0 h-full w-[300px] flex flex-col z-30"
       style={{
         background: 'var(--c-surface)',
         borderRight: '1px solid var(--c-border)',
@@ -67,7 +67,7 @@ export function LessonSidebar({ modules, currentLessonId, completedIds, totalLes
       </div>
 
       {/* Lessons list */}
-      <div className="flex-1 overflow-y-auto py-2">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-2">
         {modules.map((mod: any) => {
           const isOpen = expanded.has(mod.id)
           const modDone = mod.lessons.filter((l: any) => completedIds.has(l.id)).length
