@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Outfit, JetBrains_Mono } from 'next/font/google'
+import { Cormorant_Garamond, Outfit, JetBrains_Mono, Playfair_Display, Source_Serif_4 } from 'next/font/google'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -14,6 +14,22 @@ const outfit = Outfit({
   subsets: ['latin', 'latin-ext'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-outfit',
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '700', '900'],
+  style: ['normal', 'italic'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
+
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin', 'latin-ext', 'cyrillic'],
+  weight: ['300', '400', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-source-serif',
   display: 'swap',
 })
 
@@ -43,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="ru"
-      className={`${cormorant.variable} ${outfit.variable} ${jetbrains.variable}`}
+      className={`${cormorant.variable} ${outfit.variable} ${jetbrains.variable} ${playfair.variable} ${sourceSerif.variable}`}
     >
       <body className="bg-night text-textc font-sans antialiased">
         {children}
