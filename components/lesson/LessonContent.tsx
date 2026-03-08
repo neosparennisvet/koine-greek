@@ -162,199 +162,205 @@ function Sec({s, anchorId}){
       <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'22px',lineHeight:1.4,color:C.blue}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
-  // ── CONCEPT GRID — карточки-концепции ──────────────────────────
-  if(s.type==='concept-grid'){
-    const cards=s.cards??[]
+
+  /* ── ANATOMY — word split: stem + coloured ending ── */
+  if(s.type==='anatomy'){
+    const words = s.words ?? []
     return(
       <div id={anchorId} style={{marginBottom:'28px'}}>
-        {s.title&&<h2 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3.5vw,34px)',fontWeight:900,lineHeight:1.15,marginBottom:'16px',color:C.text}}>{s.title}</h2>}
-        {s.content&&<p style={{marginBottom:'20px',color:C.text,fontSize:'17px',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'16px',margin:'8px 0 4px'}}>
-          {cards.map((c,i)=>(
-            <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'22px 20px',borderTop:`3px solid ${c.color||C.blue}`,transition:'transform .2s, box-shadow .2s'}}
-              onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.boxShadow='0 12px 28px rgba(26,18,8,.1)'}}
-              onMouseLeave={e=>{e.currentTarget.style.transform='none';e.currentTarget.style.boxShadow='none'}}>
-              {c.icon&&<div style={{fontSize:'28px',marginBottom:'10px'}}>{c.icon}</div>}
-              <h4 style={{fontFamily:'var(--font-playfair),serif',fontSize:'17px',fontWeight:700,color:c.color||C.blue,marginBottom:'8px'}}>{c.title}</h4>
-              <p style={{fontSize:'14px',color:'#555',margin:0,lineHeight:1.65}} dangerouslySetInnerHTML={{__html:md(c.body)}}/>
-            </div>
-          ))}
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'16px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:'16px'}}>
+          {words.map((w,i)=>{
+            const endingColor = w.case==='nom'?'#2a7fd4':w.case==='acc'?'#c0392b':w.case==='gen'?'#7c4dff':w.case==='dat'?'#2e7d32':'#c8922a'
+            return(
+              <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'24px 16px 44px',textAlign:'center',position:'relative'}}>
+                <div style={{fontSize:'11px',color:C.muted,fontFamily:'var(--font-jetbrains),monospace',letterSpacing:'1px',marginBottom:'8px',textTransform:'uppercase'}}>{w.label}</div>
+                <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(38px,7vw,58px)',fontWeight:900,letterSpacing:'2px',display:'flex',justifyContent:'center',lineHeight:1.1}}>
+                  <span style={{color:C.blue,position:'relative'}}>
+                    {w.stem}
+                    <span style={{position:'absolute',bottom:'-26px',left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-jetbrains),monospace',fontSize:'9px',color:C.blue,whiteSpace:'nowrap',letterSpacing:'0.5px'}}>основа</span>
+                  </span>
+                  <span style={{color:endingColor,position:'relative',fontWeight:900}}>
+                    {w.ending}
+                    <span style={{position:'absolute',bottom:'-26px',left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-jetbrains),monospace',fontSize:'9px',color:endingColor,whiteSpace:'nowrap',letterSpacing:'0.5px'}}>окончание</span>
+                  </span>
+                </div>
+                <div style={{position:'absolute',bottom:'10px',left:0,right:0,display:'flex',justifyContent:'center',gap:'16px',flexWrap:'wrap'}}>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:'5px',fontSize:'12px'}}>
+                    <span style={{width:'8px',height:'8px',borderRadius:'50%',background:C.blue,display:'inline-block'}}/>
+                    <span style={{color:C.muted}}>{w.stemMeaning}</span>
+                  </span>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:'5px',fontSize:'12px'}}>
+                    <span style={{width:'8px',height:'8px',borderRadius:'50%',background:endingColor,display:'inline-block'}}/>
+                    <span style={{color:C.muted}}>{w.endingMeaning}</span>
+                  </span>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     )
   }
-  // ── WORD ANATOMY — анатомия слова (основа + окончание) ─────────
-  if(s.type==='word-anatomy'){
-    const items=s.items??[]
-    return(
-      <div id={anchorId} style={{marginBottom:'32px'}}>
-        {s.title&&<h2 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3.5vw,34px)',fontWeight:900,lineHeight:1.15,marginBottom:'12px',color:C.text}}>{s.title}</h2>}
-        {s.content&&<p style={{marginBottom:'20px',color:C.text,fontSize:'17px',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        {items.map((item,idx)=>(
-          <div key={idx} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'16px',padding:'28px 20px 52px',margin:'20px 0',textAlign:'center',position:'relative'}}>
-            {item.label&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.muted,marginBottom:'10px',letterSpacing:'1px'}}>{item.label}</div>}
-            <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(40px,8vw,68px)',fontWeight:900,letterSpacing:'3px',display:'inline-flex',marginBottom:'32px'}}>
-              <span style={{color:C.blue,position:'relative'}}>
-                {item.stem}
-                <span style={{position:'absolute',bottom:'-26px',left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',color:C.blue,whiteSpace:'nowrap'}}>{item.stemLabel||'основа'}</span>
-              </span>
-              <span style={{color:'#8b3a0f',position:'relative'}}>
-                {item.ending}
-                <span style={{position:'absolute',bottom:'-26px',left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',color:'#8b3a0f',whiteSpace:'nowrap'}}>{item.endingLabel||'окончание'}</span>
-              </span>
-            </div>
-            <div style={{display:'flex',justifyContent:'center',gap:'24px',flexWrap:'wrap',marginTop:'8px'}}>
-              <div style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'14px'}}>
-                <div style={{width:'11px',height:'11px',borderRadius:'50%',background:C.blue,flexShrink:0}}/>
-                <span><strong>{item.stem}–</strong> → {item.stemMeaning||'основа'}</span>
-              </div>
-              <div style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'14px'}}>
-                <div style={{width:'11px',height:'11px',borderRadius:'50%',background:'#8b3a0f',flexShrink:0}}/>
-                <span><strong>–{item.ending}</strong> → {item.endingMeaning||'окончание'}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-  // ── EXAMPLE SENTENCE — пример с разбором ───────────────────────
-  if(s.type==='example-sentence'){
-    const parts=s.parts??[]
-    return(
-      <div id={anchorId} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'18px 0'}}>
-        {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',color:C.muted,letterSpacing:'2px',textTransform:'uppercase',marginBottom:'12px'}}>{s.title}</div>}
-        <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(19px,3vw,24px)',lineHeight:1.5,marginBottom:'10px'}}>
-          {parts.map((p,i)=>(
-            <span key={i} style={{color:p.color||C.text,fontWeight:p.bold?700:400}}>{p.text}{' '}</span>
-          ))}
-        </div>
-        {s.translation&&<div style={{color:'#666',fontStyle:'italic',fontSize:'15px',marginBottom:'12px'}}>{s.translation}</div>}
-        {s.tags&&<div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
-          {s.tags.map((t,i)=>(
-            <span key={i} style={{display:'inline-block',padding:'2px 10px',borderRadius:'20px',fontSize:'11px',fontFamily:'var(--font-jetbrains),monospace',fontWeight:600,background:t.bg||'#dceeff',color:t.color||C.blue,letterSpacing:'.3px'}}>{t.label}</span>
-          ))}
-        </div>}
-      </div>
-    )
-  }
-  // ── ARTICLE GRID — таблица артикля ─────────────────────────────
-  if(s.type==='article-grid'){
-    const rows=s.rows??[]
-    return(
-      <div id={anchorId} style={{marginBottom:'28px'}}>
-        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'21px',fontWeight:700,color:C.blue,marginBottom:'10px'}}>{s.title}</h3>}
-        {s.content&&<p style={{marginBottom:'14px',color:C.muted,fontSize:'15px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        <div style={{display:'grid',gridTemplateColumns:'auto 1fr 1fr 1fr',gap:'2px',background:C.border,borderRadius:'12px',overflow:'hidden',border:`1.5px solid ${C.border}`,margin:'8px 0'}}>
-          {/* header */}
-          <div style={{background:C.ink,padding:'10px',fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.gold,letterSpacing:'1px',textAlign:'center',fontWeight:600}}/>
-          {['♂ Мужской','♀ Женский','⚫ Средний'].map((h,i)=>(
-            <div key={i} style={{background:C.ink,padding:'10px',fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.gold,letterSpacing:'1px',textAlign:'center',fontWeight:600}}>{h}</div>
-          ))}
-          {rows.map((row,ri)=>[
-            <div key={`l${ri}`} style={{background:C.soft,padding:'9px 10px',fontSize:'10px',fontFamily:'var(--font-jetbrains),monospace',color:'#666',display:'flex',alignItems:'center',justifyContent:'flex-end'}}>
-              <span style={{display:'inline-block',padding:'2px 8px',borderRadius:'20px',fontSize:'9px',fontFamily:'var(--font-jetbrains),monospace',fontWeight:600,background:row.badge?.bg||'#dceeff',color:row.badge?.color||C.blue}}>{row.label}</span>
-            </div>,
-            ...([row.m,row.f,row.n].map((cell,ci)=>(
-              <div key={`c${ri}-${ci}`} style={{background:C.card,padding:'11px 8px',textAlign:'center',fontFamily:'var(--font-playfair),serif',fontSize:'22px',fontWeight:700,color:[C.blue,'#7a2560',C.green][ci],transition:'background .15s',cursor:'default'}}
-                onMouseEnter={e=>{e.currentTarget.style.background='#f0ead0'}}
-                onMouseLeave={e=>{e.currentTarget.style.background=C.card}}>
-                {cell}
-              </div>
-            )))
-          ])}
-        </div>
-      </div>
-    )
-  }
-  // ── PARADIGM — парадигма с цветными основами и окончаниями ─────
+
+  /* ── PARADIGM — full paradigm table with case-coloured rows ── */
   if(s.type==='paradigm'){
-    const rows=s.rows??[]
+    const CASE_COLORS = {
+      nom: {bg:'rgba(42,127,212,0.08)',border:'#2a7fd4',label:'#2a7fd4'},
+      acc: {bg:'rgba(192,57,43,0.08)',border:'#c0392b',label:'#c0392b'},
+      gen: {bg:'rgba(124,77,255,0.08)',border:'#7c4dff',label:'#7c4dff'},
+      dat: {bg:'rgba(46,125,50,0.08)',border:'#2e7d32',label:'#2e7d32'},
+    }
+    const rows = s.rows ?? []
+    const cols = s.cols ?? []
     return(
       <div id={anchorId} style={{marginBottom:'28px'}}>
-        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'21px',fontWeight:700,color:C.blue,marginBottom:'6px'}}>{s.title}</h3>}
-        {s.content&&<p style={{marginBottom:'12px',color:C.muted,fontSize:'15px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        <div style={{overflowX:'auto',borderRadius:'12px',border:`1.5px solid ${C.border}`}}>
-          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'15px',background:C.card,minWidth:'500px'}}>
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'10px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <div style={{overflowX:'auto',borderRadius:'12px',border:`1.5px solid ${C.border}`,marginBottom:'8px'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'15px',background:C.card,minWidth:'400px'}}>
             <thead>
               <tr style={{background:C.ink}}>
-                {s.headers?.map((h,i)=>(
-                  <th key={i} style={{padding:'12px 14px',textAlign:i===0?'left':'center',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',color:i===0?'rgba(247,242,232,.7)':['#90b8e0','#d4a0c8','#90c890'][i-1]||C.gold,fontWeight:600}}>{h}</th>
+                <th style={{padding:'12px 14px',textAlign:'left',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',color:C.muted,fontWeight:600,minWidth:'130px'}}>ПАДЕЖ</th>
+                {cols.map((col,i)=>(
+                  <th key={i} style={{padding:'12px 14px',textAlign:'center',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',color:col.color??C.gold,fontWeight:600}}>{col.label}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map((row,ri)=>(
-                <tr key={ri} style={{background:ri%2===0?C.card:C.soft,borderBottom:`1px solid ${C.border}`}}>
-                  {/* падеж */}
-                  <td style={{padding:'11px 14px'}}>
-                    {row.badge
-                      ? <span style={{display:'inline-block',padding:'2px 10px',borderRadius:'20px',fontSize:'10px',fontFamily:'var(--font-jetbrains),monospace',fontWeight:600,background:row.badge.bg,color:row.badge.color,letterSpacing:'.3px',marginRight:'6px'}}>{row.case}</span>
-                      : <span style={{fontSize:'14px',color:C.text}}>{row.case}</span>
-                    }
-                    {row.num&&<span style={{display:'inline-block',padding:'2px 8px',borderRadius:'20px',fontSize:'9px',fontFamily:'var(--font-jetbrains),monospace',fontWeight:600,background:'#e8f5e4',color:C.green,marginLeft:'4px'}}>{row.num}</span>}
-                  </td>
-                  {/* ячейки с основой + окончанием */}
-                  {row.cells?.map((cell,ci)=>(
-                    <td key={ci} style={{padding:'11px 14px',textAlign:'center',verticalAlign:'middle'}}>
-                      {typeof cell==='string'
-                        ? <span style={{fontFamily:'var(--font-playfair),serif',fontSize:'18px',color:C.text}} dangerouslySetInnerHTML={{__html:cell}}/>
-                        : <span style={{fontFamily:'var(--font-playfair),serif',fontSize:'18px'}}>
-                            <span style={{color:C.blue,fontWeight:600}}>{cell.stem}</span>
-                            <span style={{color:'#8b3a0f',fontWeight:700}}>{cell.end}</span>
-                          </span>
-                      }
+              {rows.map((row,ri)=>{
+                const cc = CASE_COLORS[row.case] ?? {bg:'transparent',border:'transparent',label:C.muted}
+                return(
+                  <tr key={ri} style={{background:cc.bg,borderBottom:`1px solid ${C.border}`}}>
+                    <td style={{padding:'11px 14px',borderLeft:`3px solid ${cc.border}`,verticalAlign:'middle'}}>
+                      <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:cc.label}}>{row.label}</div>
+                      {row.sub&&<div style={{fontSize:'10px',color:C.muted,marginTop:'1px'}}>{row.sub}</div>}
                     </td>
-                  ))}
-                </tr>
-              ))}
+                    {row.cells.map((cell,ci)=>{
+                      // Parse stem|ending format
+                      const parts = String(cell).split('|')
+                      const hasSplit = parts.length===2
+                      const endingColor = cc.label
+                      return(
+                        <td key={ci} style={{padding:'11px 14px',textAlign:'center',verticalAlign:'middle'}}>
+                          {hasSplit?(
+                            <span style={{fontFamily:'var(--font-playfair),serif',fontSize:'20px',fontWeight:700}}>
+                              <span style={{color:C.blue}}>{parts[0]}</span>
+                              <span style={{color:endingColor,fontWeight:900}}>{parts[1]}</span>
+                            </span>
+                          ):(
+                            <span style={{fontFamily:'var(--font-playfair),serif',fontSize:'20px',color:C.text}} dangerouslySetInnerHTML={{__html:md(String(cell??'—'))}}/>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
+        </div>
+        {s.hint&&<div style={{fontSize:'13px',color:C.muted,padding:'8px 12px',background:C.soft,borderRadius:'8px',lineHeight:1.6}} dangerouslySetInnerHTML={{__html:'💡 '+md(s.hint)}}/>}
+      </div>
+    )
+  }
+
+  /* ── ARTICLE GRID — visual article table with coloured genders ── */
+  if(s.type==='articlegrid'){
+    const rows2 = s.rows ?? []
+    const genderColors = {masc:C.blue, fem:'#9b2c8a', neut:'#2e7d32'}
+    return(
+      <div id={anchorId} style={{marginBottom:'28px'}}>
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'12px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <div style={{display:'grid',gridTemplateColumns:'auto 1fr 1fr 1fr',gap:'2px',background:C.border,borderRadius:'12px',overflow:'hidden',border:`1.5px solid ${C.border}`,marginBottom:'10px'}}>
+          {/* header row */}
+          <div style={{background:C.ink,padding:'11px 12px',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',color:C.muted}}/>
+          {[{label:'МУЖ. РОД',color:genderColors.masc},{label:'ЖЕН. РОД',color:genderColors.fem},{label:'СРЕД. РОД',color:genderColors.neut}].map((g,i)=>(
+            <div key={i} style={{background:C.ink,padding:'11px 10px',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1.5px',textAlign:'center',color:g.color,fontWeight:700}}>{g.label}</div>
+          ))}
+          {rows2.map((row,ri)=>([
+            <div key={`l${ri}`} style={{background:C.soft,padding:'10px 12px',fontSize:'11px',fontFamily:'var(--font-jetbrains),monospace',color:C.muted,display:'flex',alignItems:'center',justifyContent:'flex-end',gap:'4px',borderBottom:`1px solid ${C.border}`}}>
+              {row.label}
+            </div>,
+            ...(['masc','fem','neut'] as const).map((g,gi)=>(
+              <div key={`c${ri}${gi}`} style={{background:C.card,padding:'13px 8px',textAlign:'center',fontFamily:'var(--font-playfair),serif',fontSize:'24px',fontWeight:700,color:genderColors[g],borderBottom:`1px solid ${C.border}`,transition:'background .15s',cursor:'default'}}
+                onMouseEnter={e=>e.currentTarget.style.background=C.soft}
+                onMouseLeave={e=>e.currentTarget.style.background=C.card}>
+                {row[g]}
+              </div>
+            ))
+          ]))}
+        </div>
+        {s.hint&&<div style={{fontSize:'13px',color:C.muted,padding:'8px 12px',background:C.soft,borderRadius:'8px',lineHeight:1.6}} dangerouslySetInnerHTML={{__html:'💡 '+md(s.hint)}}/>}
+      </div>
+    )
+  }
+
+  /* ── EXEGESIS — dark theological insight card ── */
+  if(s.type==='exegesis')return(
+    <div id={anchorId} style={{background:C.blue,color:'white',borderRadius:'16px',padding:'clamp(28px,4vw,40px) clamp(20px,4vw,40px)',margin:'32px 0',position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',right:'14px',bottom:'-16px',fontFamily:'var(--font-playfair),serif',fontSize:'100px',fontWeight:900,opacity:.07,pointerEvents:'none',color:'white',userSelect:'none'}}>{s.watermark??'θεός'}</div>
+      <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'2px',textTransform:'uppercase',color:C.gold,marginBottom:'10px'}}>📖 {s.label??'Прикосновение к экзегетике'}</div>
+      {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'21px',fontWeight:700,color:C.gold,marginBottom:'14px'}}>{s.title}</h3>}
+      <div style={{opacity:.9,fontSize:'15px',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
+    </div>
+  )
+
+  /* ── CASEGRID — visual case overview cards ── */
+  if(s.type==='casegrid'){
+    const cases = s.cases ?? []
+    const caseStyles = {
+      nom:{bg:'rgba(42,127,212,0.1)',border:'rgba(42,127,212,0.35)',color:'#2a7fd4',accent:'#1565c0'},
+      acc:{bg:'rgba(192,57,43,0.1)',border:'rgba(192,57,43,0.35)',color:'#c0392b',accent:'#b71c1c'},
+      gen:{bg:'rgba(124,77,255,0.1)',border:'rgba(124,77,255,0.35)',color:'#7c4dff',accent:'#6200ea'},
+      dat:{bg:'rgba(46,125,50,0.1)',border:'rgba(46,125,50,0.35)',color:'#2e7d32',accent:'#1b5e20'},
+    }
+    return(
+      <div id={anchorId} style={{marginBottom:'28px'}}>
+        {s.title&&<><SL text="Обзор"/><h2 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3.5vw,34px)',fontWeight:900,lineHeight:1.15,marginBottom:'16px',color:C.text}}>{s.title}</h2></>}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:'14px',marginBottom:'16px'}}>
+          {cases.map((c,i)=>{
+            const cs = caseStyles[c.id] ?? caseStyles.nom
+            return(
+              <div key={i} style={{background:cs.bg,border:`1.5px solid ${cs.border}`,borderRadius:'12px',padding:'18px 20px',position:'relative',overflow:'hidden'}}>
+                <div style={{position:'absolute',right:'-4px',top:'-8px',fontFamily:'var(--font-playfair),serif',fontSize:'52px',opacity:.06,pointerEvents:'none',color:cs.color,lineHeight:1}}>{c.greek}</div>
+                <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'9px',fontWeight:700,letterSpacing:'2px',textTransform:'uppercase',color:cs.color,marginBottom:'4px'}}>{c.name}</div>
+                <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'16px',fontWeight:700,color:C.text,marginBottom:'6px'}}>{c.question}</div>
+                <div style={{fontSize:'14px',color:C.muted,lineHeight:1.5,marginBottom:'8px'}}>{c.desc}</div>
+                <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
+                  {(c.endings??[]).map((e,j)=>(
+                    <span key={j} style={{display:'inline-block',padding:'2px 10px',borderRadius:'20px',fontSize:'14px',fontFamily:'var(--font-playfair),serif',fontWeight:700,background:'rgba(0,0,0,0.06)',color:cs.color,border:`1px solid ${cs.border}`}}>{e}</span>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     )
   }
-  // ── RULES LIST — список правил ──────────────────────────────────
-  if(s.type==='rules-list'){
-    const rules=s.rules??[]
+
+  /* ── RULES — numbered rules list ── */
+  if(s.type==='rules'){
+    const items = s.items ?? []
     return(
-      <div id={anchorId} style={{marginBottom:'32px'}}>
-        {s.title&&<><SL text="Ключевые правила"/><h2 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3.5vw,34px)',fontWeight:900,lineHeight:1.15,marginBottom:'16px',color:C.text}}>{s.title}</h2></>}
-        {s.content&&<p style={{marginBottom:'16px',color:C.text,fontSize:'17px',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        <ul style={{listStyle:'none',padding:0,margin:'8px 0'}}>
-          {rules.map((r,i)=>(
-            <li key={i} style={{display:'flex',gap:'14px',padding:'16px 18px',borderRadius:'10px',marginBottom:'10px',background:C.card,border:`1.5px solid ${C.border}`,fontSize:'15px',alignItems:'flex-start',lineHeight:1.65}}>
-              <div style={{flexShrink:0,width:'28px',height:'28px',background:C.ink,color:C.gold,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-jetbrains),monospace',fontSize:'13px',fontWeight:600,marginTop:'1px'}}>{i+1}</div>
-              <div style={{color:C.text}} dangerouslySetInnerHTML={{__html:md(r)}}/>
+      <div id={anchorId} style={{marginBottom:'28px'}}>
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'12px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'14px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <ul style={{listStyle:'none',padding:0,margin:0}}>
+          {items.map((item,i)=>(
+            <li key={i} style={{display:'flex',gap:'14px',padding:'14px 18px',borderRadius:'10px',marginBottom:'10px',background:C.card,border:`1.5px solid ${C.border}`,fontSize:'15px',alignItems:'flex-start'}}>
+              <span style={{flexShrink:0,width:'30px',height:'30px',background:C.ink,color:C.gold,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-jetbrains),monospace',fontSize:'13px',fontWeight:700,marginTop:'1px'}}>{i+1}</span>
+              <span style={{color:C.text,lineHeight:1.65}} dangerouslySetInnerHTML={{__html:md(item)}}/>
             </li>
           ))}
         </ul>
       </div>
     )
   }
-  // ── EXEGESIS — экзегетическая карточка ─────────────────────────
-  if(s.type==='exegesis'){
-    const annotations=s.annotations??[]
-    return(
-      <div id={anchorId} style={{background:C.blue,color:'white',borderRadius:'16px',padding:'32px 36px',margin:'32px 0',position:'relative',overflow:'hidden'}}>
-        <div style={{position:'absolute',right:'14px',bottom:'-16px',fontFamily:'var(--font-playfair),serif',fontSize:'100px',fontWeight:900,opacity:.07,pointerEvents:'none',color:'white',userSelect:'none'}}>{s.watermark||'θεός'}</div>
-        {s.label&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',letterSpacing:'3px',textTransform:'uppercase',color:C.gold,marginBottom:'12px'}}>{s.label}</div>}
-        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',color:C.gold,marginBottom:'14px',fontSize:'20px',fontWeight:700}}>{s.title}</h3>}
-        {s.greek&&<div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(20px,4vw,28px)',margin:'14px 0 6px',lineHeight:1.5,letterSpacing:'1px'}} dangerouslySetInnerHTML={{__html:s.greek}}/>}
-        {s.translation&&<div style={{fontStyle:'italic',opacity:.7,fontSize:'15px',marginBottom:'14px'}}>{s.translation}</div>}
-        {s.content&&<p style={{opacity:.9,fontSize:'15px',lineHeight:1.75,marginBottom:'14px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        {annotations.length>0&&<div style={{display:'flex',gap:'10px',flexWrap:'wrap',marginTop:'14px'}}>
-          {annotations.map((a,i)=>(
-            <div key={i} style={{background:'rgba(255,255,255,.1)',borderRadius:'8px',padding:'7px 13px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace'}}>
-              <span style={{color:C.gold,display:'block',fontSize:'17px',fontFamily:'var(--font-playfair),serif',fontWeight:700,marginBottom:'2px'}}>{a.form}</span>
-              {a.note}
-            </div>
-          ))}
-        </div>}
-        {s.quote&&<div style={{marginTop:'16px',padding:'12px 16px',background:'rgba(255,255,255,.07)',borderRadius:'8px',fontSize:'14px',opacity:.85}}>{s.quote}</div>}
-      </div>
-    )
-  }
+
   return null
 }
 

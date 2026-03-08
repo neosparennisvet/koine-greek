@@ -1,1 +1,0 @@
-export { CurriculumPreview } from "./FeaturesSection"
