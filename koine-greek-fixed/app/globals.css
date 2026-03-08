@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   ТЕМА: Тёмная (по умолчанию)
+═══════════════════════════════════════════════ */
+:root {
+  --c-bg:         #14161d;
+  --c-surface:    #1a1d27;
+  --c-card:       #1f2235;
+  --c-border:     #2e3450;
+  --c-muted:      #5a6385;
+  --c-soft:       #9aa3be;    /* основной текст в уроках — светлее! */
+  --c-text:       #c8d4f0;    /* ещё светлее для лучшего чтения */
+  --c-heading:    #eef3ff;
+  --c-table-head: #252840;
+  --c-table-row:  #1c1f30;
+  --c-table-alt:  #222539;
+
+  scroll-behavior: smooth;
+  scroll-padding-top: 56px; /* offset for sticky lesson nav */
+}
+
+/* ═══════════════════════════════════════════════
+   ТЕМА: Светлая
+═══════════════════════════════════════════════ */
+[data-theme="light"] {
+  --c-bg:         #f4f1eb;
+  --c-surface:    #ffffff;
+  --c-card:       #faf8f3;
+  --c-border:     #ddd8ce;
+  --c-muted:      #8a8278;
+  --c-soft:       #4a4238;
+  --c-text:       #2a2318;
+  --c-heading:    #110e08;
+  --c-table-head: #f0ece3;
+  --c-table-row:  #faf8f3;
+  --c-table-alt:  #f4f1eb;
+}
+
+/* ═══════════════════════════════════════════════
+   БАЗОВЫЕ СТИЛИ
+═══════════════════════════════════════════════ */
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Плавное переключение темы */
+  *, *::before, *::after {
+    transition: background-color 0.25s ease, border-color 0.2s ease, color 0.15s ease;
+  }
+
+  ::selection {
+    background: rgba(201,154,46,.35);
+    color: var(--c-heading);
+  }
+
+  ::-webkit-scrollbar       { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--c-muted); }
+}
+
+/* ═══════════════════════════════════════════════
+   УТИЛИТЫ
+═══════════════════════════════════════════════ */
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  .font-greek {
+    font-family: var(--font-cormorant), 'Georgia', serif;
+  }
+  .glow-gold { box-shadow: 0 0 40px rgba(201,154,46,.18); }
+  .glow-teal { box-shadow: 0 0 40px rgba(46,158,143,.18); }
+}
+
+/* ═══════════════════════════════════════════════
+   КОМПОНЕНТЫ УРОКОВ
+═══════════════════════════════════════════════ */
+@layer components {
+  /* Таблицы — максимальная читаемость */
+  .lesson-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 15px;
+  }
+  .lesson-table thead tr {
+    background: var(--c-table-head);
+  }
+  .lesson-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    border-bottom: 2px solid var(--c-border);
+  }
+  .lesson-table tbody tr {
+    background: var(--c-table-row);
+    border-bottom: 1px solid var(--c-border);
+    transition: background 0.15s ease;
+  }
+  .lesson-table tbody tr:nth-child(even) {
+    background: var(--c-table-alt);
+  }
+  .lesson-table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .lesson-table tbody tr:hover {
+    background: color-mix(in srgb, var(--c-border) 40%, transparent);
+  }
+  .lesson-table tbody td {
+    padding: 11px 16px;
+    color: var(--c-text);       /* ← яркий текст в ячейках */
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .lesson-table tbody td:first-child {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 18px;
+    color: var(--c-heading);    /* ← греческие буквы — самые яркие */
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* Lesson prose */
+  .lesson-prose {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--c-text);
+  }
+  .lesson-prose strong {
+    color: var(--c-heading);
+    font-weight: 600;
+  }
+
+  /* Падежные бейджи */
+  .badge-nom { @apply text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(91,110,245,.15); color: #7c8ef8; }
+  .badge-acc { @apply text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(201,154,46,.15); color: #c99a2e; }
+  .badge-gen { @apply text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(192,68,90,.15); color: #e07a8e; }
+  .badge-dat { @apply text-xs font-bold px-2 py-0.5 rounded-full; background: rgba(46,158,143,.15); color: #3abfae; }
+}
+
+/* Дашборд */
+.dashboard-main { margin-left: 260px; }
+
+/* Урок: у него свой sidebar (LessonSidebar), поэтому сбрасываем отступ дашборда */
+.dashboard-main:has(.lesson-layout) {
+  margin-left: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   ПЕРЕМЕННЫЕ УРОКА (оба режима)
+═══════════════════════════════════════════════ */
+:root {
+  --lesson-bg:      #f7f2e8;
+  --lesson-ink:     #1a1208;
+  --lesson-accent:  #8b3a0f;
+  --lesson-gold:    #c8922a;
+  --lesson-blue:    #1e3a5f;
+  --lesson-green:   #2d5a27;
+  --lesson-soft:    #f0ead8;
+  --lesson-border:  #d4c9a8;
+  --lesson-card:    #ffffff;
+  --lesson-text:    #2a1f10;
+  --lesson-muted:   #7a6e60;
+}
+[data-theme="dark"] {
+  --lesson-bg:      #14161d;
+  --lesson-ink:     #0d0e14;
+  --lesson-accent:  #c97a44;
+  --lesson-gold:    #c8922a;
+  --lesson-blue:    #4a7fc0;
+  --lesson-green:   #5aaa50;
+  --lesson-soft:    #1f2235;
+  --lesson-border:  #2e3450;
+  --lesson-card:    #1a1d27;
+  --lesson-text:    #c8d4f0;
+  --lesson-muted:   #7a87aa;
+}
+
+/* ═══════════════════════════════════════════════
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Dashboard sidebar — скрываем на мобильном */
+  .dashboard-main { margin-left: 0 !important; }
+
+  /* Dashboard sidebar itself */
+  .dashboard-sidebar-desktop { display: none !important; }
+
+  /* Lesson sidebar toggle — сдвигаем ниже */
+  .lesson-sidebar-toggle {
+    top: 6px !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Уменьшаем padding на мобильных */
+  html { scroll-padding-top: 48px; }
+}
+
+/* Hide scrollbar on lesson nav */
+.lesson-nav-scroll::-webkit-scrollbar { display: none; }
