@@ -392,7 +392,6 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     {/* ── ШАПКА тёмная ─────────────────────────────────────────── */}
     <header style={{background:C.ink,color:'#f7f2e8',padding:'clamp(36px,5vw,60px) clamp(18px,4vw,40px) clamp(32px,4vw,50px)',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',right:'-20px',top:'50%',transform:'translateY(-50%)',fontFamily:'var(--font-playfair),serif',fontSize:'140px',fontWeight:900,opacity:.06,letterSpacing:'-4px',pointerEvents:'none',whiteSpace:'nowrap',color:'#f7f2e8',userSelect:'none'}}>ΕΛΛΗΝΙΚΑ</div>
-      <div style={{maxWidth:'900px',margin:'0 auto'}}>
         <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'12px',letterSpacing:'4px',textTransform:'uppercase',color:C.gold,marginBottom:'16px'}}>{mod?.title??`Модуль ${lesson.moduleId}`} · Глава {lessonNum}</div>
         <h1 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(32px,6vw,64px)',fontWeight:900,lineHeight:1.05,marginBottom:'14px',color:'#f7f2e8'}}>{lesson.title}</h1>
         <p style={{fontSize:'18px',opacity:.7,fontStyle:'italic',maxWidth:'560px',marginBottom:'28px'}}>{lesson.subtitle}</p>
@@ -401,7 +400,6 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
             <span key={i} style={{background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.15)',borderRadius:'30px',padding:'5px 15px',fontSize:'13px',fontFamily:'var(--font-jetbrains),monospace',color:chip.startsWith('✓')?'#a0ffb0':'inherit'}}>{chip}</span>
           ))}
         </div>
-      </div>
     </header>
 
     {/* ── НАВИГАЦИЯ — sticky, with dynamic section links ─────── */}
