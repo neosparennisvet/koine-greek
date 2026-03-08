@@ -166,34 +166,35 @@ function Sec({s, anchorId}){
   /* ── ANATOMY — word split: stem + coloured ending ── */
   if(s.type==='anatomy'){
     const words = s.words ?? []
+    // nom = teal (visible on both light/dark), acc = red, gen = violet, dat = green
+    const caseColor = (c) => c==='nom'?'#0ea5a0':c==='acc'?'#c0392b':c==='gen'?'#7c4dff':c==='dat'?'#2e7d32':'#c8922a'
     return(
       <div id={anchorId} style={{marginBottom:'28px'}}>
         {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
         {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'16px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:'16px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:'16px'}}>
           {words.map((w,i)=>{
-            const endingColor = w.case==='nom'?'#2a7fd4':w.case==='acc'?'#c0392b':w.case==='gen'?'#7c4dff':w.case==='dat'?'#2e7d32':'#c8922a'
+            const ec = caseColor(w.case)
             return(
-              <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'24px 16px 44px',textAlign:'center',position:'relative'}}>
-                <div style={{fontSize:'11px',color:C.muted,fontFamily:'var(--font-jetbrains),monospace',letterSpacing:'1px',marginBottom:'8px',textTransform:'uppercase'}}>{w.label}</div>
-                <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(38px,7vw,58px)',fontWeight:900,letterSpacing:'2px',display:'flex',justifyContent:'center',lineHeight:1.1}}>
-                  <span style={{color:C.blue,position:'relative'}}>
-                    {w.stem}
-                    <span style={{position:'absolute',bottom:'-26px',left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-jetbrains),monospace',fontSize:'9px',color:C.blue,whiteSpace:'nowrap',letterSpacing:'0.5px'}}>основа</span>
-                  </span>
-                  <span style={{color:endingColor,position:'relative',fontWeight:900}}>
-                    {w.ending}
-                    <span style={{position:'absolute',bottom:'-26px',left:'50%',transform:'translateX(-50%)',fontFamily:'var(--font-jetbrains),monospace',fontSize:'9px',color:endingColor,whiteSpace:'nowrap',letterSpacing:'0.5px'}}>окончание</span>
-                  </span>
+              <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'20px 16px 16px',textAlign:'center',display:'flex',flexDirection:'column',gap:'12px'}}>
+                {/* label */}
+                <div style={{fontSize:'10px',color:C.muted,fontFamily:'var(--font-jetbrains),monospace',letterSpacing:'1px',textTransform:'uppercase',lineHeight:1.5}}>{w.label}</div>
+                {/* word display */}
+                <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(34px,6vw,52px)',fontWeight:900,letterSpacing:'2px',display:'flex',justifyContent:'center',lineHeight:1.15,padding:'4px 0'}}>
+                  <span style={{color:C.blue}}>{w.stem}</span>
+                  <span style={{color:ec,fontWeight:900}}>{w.ending}</span>
                 </div>
-                <div style={{position:'absolute',bottom:'10px',left:0,right:0,display:'flex',justifyContent:'center',gap:'16px',flexWrap:'wrap'}}>
-                  <span style={{display:'inline-flex',alignItems:'center',gap:'5px',fontSize:'12px'}}>
-                    <span style={{width:'8px',height:'8px',borderRadius:'50%',background:C.blue,display:'inline-block'}}/>
-                    <span style={{color:C.muted}}>{w.stemMeaning}</span>
+                {/* divider */}
+                <div style={{height:'1px',background:C.border,margin:'0 8px'}}/>
+                {/* legend */}
+                <div style={{display:'flex',flexDirection:'column',gap:'5px',alignItems:'flex-start',padding:'0 4px'}}>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:'7px',fontSize:'12px',color:C.text}}>
+                    <span style={{width:'10px',height:'10px',borderRadius:'50%',background:C.blue,flexShrink:0,display:'inline-block'}}/>
+                    <span>{w.stemMeaning}</span>
                   </span>
-                  <span style={{display:'inline-flex',alignItems:'center',gap:'5px',fontSize:'12px'}}>
-                    <span style={{width:'8px',height:'8px',borderRadius:'50%',background:endingColor,display:'inline-block'}}/>
-                    <span style={{color:C.muted}}>{w.endingMeaning}</span>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:'7px',fontSize:'12px',color:C.text}}>
+                    <span style={{width:'10px',height:'10px',borderRadius:'50%',background:ec,flexShrink:0,display:'inline-block'}}/>
+                    <span>{w.endingMeaning}</span>
                   </span>
                 </div>
               </div>
@@ -207,7 +208,7 @@ function Sec({s, anchorId}){
   /* ── PARADIGM — full paradigm table with case-coloured rows ── */
   if(s.type==='paradigm'){
     const CASE_COLORS = {
-      nom: {bg:'rgba(42,127,212,0.08)',border:'#2a7fd4',label:'#2a7fd4'},
+      nom: {bg:'rgba(14,165,160,0.08)',border:'#0ea5a0',label:'#0ea5a0'},
       acc: {bg:'rgba(192,57,43,0.08)',border:'#c0392b',label:'#c0392b'},
       gen: {bg:'rgba(124,77,255,0.08)',border:'#7c4dff',label:'#7c4dff'},
       dat: {bg:'rgba(46,125,50,0.08)',border:'#2e7d32',label:'#2e7d32'},
