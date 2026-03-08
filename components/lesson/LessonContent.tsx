@@ -403,20 +403,22 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     </header>
 
     {/* ── НАВИГАЦИЯ — sticky, with dynamic section links ─────── */}
-    <nav style={{
+    <nav className="lesson-nav-scroll" style={{
       background:C.ink,
       borderTop:'1px solid rgba(255,255,255,.08)',
       padding:'0 clamp(14px,3vw,32px)',
       display:'flex',
       overflowX:'auto',
+      overflowY:'hidden',
       scrollbarWidth:'none',
       position:'sticky',
       top:0,
       zIndex:20,
       backdropFilter:'blur(10px)',
+      WebkitOverflowScrolling:'touch',
     }}>
       {navItems.map((item,i)=>(
-          <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s'}}
+          <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s',flexShrink:0}}
             onMouseEnter={e=>{e.currentTarget.style.color=C.gold;e.currentTarget.style.borderBottomColor=C.gold}}
             onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,.45)';e.currentTarget.style.borderBottomColor='transparent'}}>
             {item.label}

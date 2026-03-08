@@ -214,3 +214,6 @@
   /* Уменьшаем padding на мобильных */
   html { scroll-padding-top: 48px; }
 }
+
+/* Hide scrollbar on lesson nav */
+.lesson-nav-scroll::-webkit-scrollbar { display: none; }

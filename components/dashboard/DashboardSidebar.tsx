@@ -10,11 +10,11 @@ import type { Profile } from '@/types'
 const NAV = [
   { href: '/dashboard',       icon: '🏠', label: 'Обзор' },
   { href: '/course',          icon: '🗺️', label: 'Программа курса' },
-  { href: '/lesson/1-1',      icon: '📖', label: 'Мои уроки' },
+  { href: '__CONTINUE__',     icon: '📖', label: 'Мои уроки' },
   { href: '/dashboard/vocab', icon: '📚', label: 'Словарь' },
 ]
 
-export function DashboardSidebar({ profile }: { profile: Profile | null }) {
+export function DashboardSidebar({ profile, continueLessonId }: { profile: Profile | null, continueLessonId?: string }) {
   const path = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -62,7 +62,9 @@ export function DashboardSidebar({ profile }: { profile: Profile | null }) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <div className="text-[10px] font-bold uppercase tracking-[2px] text-muted px-3 mb-2">Навигация</div>
-        {NAV.map(({ href, icon, label }) => (
+        {NAV.map(({ href: rawHref, icon, label }) => {
+          const href = rawHref === '__CONTINUE__' ? `/lesson/${continueLessonId || '1-1'}` : rawHref
+          return (
           <Link key={href} href={href}
             className={cn(
               'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
@@ -74,7 +76,7 @@ export function DashboardSidebar({ profile }: { profile: Profile | null }) {
             <span className="text-base w-5">{icon}</span>
             {label}
           </Link>
-        ))}
+        )})}
       </nav>
 
       {/* Bottom */}

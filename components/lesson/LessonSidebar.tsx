@@ -17,7 +17,7 @@ interface Props {
 
 export function LessonSidebar({ modules, currentLessonId, completedIds, totalLessons, doneLessons }: Props) {
   const pct = Math.round((doneLessons / totalLessons) * 100)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const [expanded, setExpanded] = useState<Set<number>>(() => {
     const set = new Set<number>()
     modules.forEach(m => {
