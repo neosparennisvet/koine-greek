@@ -19,6 +19,7 @@
   --c-table-alt:  #222539;
 
   scroll-behavior: smooth;
+  scroll-padding-top: 56px; /* offset for sticky lesson nav */
 }
 
 /* ═══════════════════════════════════════════════

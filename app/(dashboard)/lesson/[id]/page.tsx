@@ -37,7 +37,7 @@ export default async function LessonPage({ params }: Props) {
   const module_ = getModuleByLessonId(lesson.id)
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#f7f2e8' }}>
+    <div className="min-h-screen" style={{ background: '#f7f2e8' }}>
       <LessonSidebar
         modules={COURSE_MODULES as any}
         currentLessonId={lesson.id}
@@ -45,17 +45,14 @@ export default async function LessonPage({ params }: Props) {
         totalLessons={36}
         doneLessons={completedIds.size}
       />
-      {/* Full width minus sidebar — LessonContent centers itself */}
-      <div style={{ marginLeft: '300px', flex: 1, minHeight: '100vh' }}>
-        <LessonContent
-          lesson={lesson}
-          module={module_}
-          userId={user.id}
-          prev={prev ?? null}
-          next={next ?? null}
-          isCompleted={completedIds.has(lesson.id)}
-        />
-      </div>
+      <LessonContent
+        lesson={lesson}
+        module={module_}
+        userId={user.id}
+        prev={prev ?? null}
+        next={next ?? null}
+        isCompleted={completedIds.has(lesson.id)}
+      />
     </div>
   )
 }

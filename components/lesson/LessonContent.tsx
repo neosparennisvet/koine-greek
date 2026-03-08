@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 
 const C = {
@@ -81,7 +81,16 @@ function TimeLine(){
   </div>
 }
 
-function Sec({s}){
+/* ═══ Section anchor ID helper ═══ */
+function sectionAnchor(title, idx) {
+  if (!title) return `section-${idx}`
+  return 'sec-' + title.toLowerCase()
+    .replace(/[^a-zа-яё0-9\s]/gi, '')
+    .replace(/\s+/g, '-')
+    .substring(0, 40)
+}
+
+function Sec({s, anchorId}){
   if(!s)return null
   if(s.type==='illustration'){
     if(s.illustration==='mediterranean-map'||s.illustration==='map')return<MedMap/>
@@ -90,14 +99,14 @@ function Sec({s}){
     return null
   }
   if(s.type==='intro')return(
-    <div style={{background:C.ink,color:'#f7f2e8',borderRadius:'16px',padding:'34px 38px',marginBottom:'36px',position:'relative',overflow:'hidden'}}>
+    <div id={anchorId} style={{background:C.ink,color:'#f7f2e8',borderRadius:'16px',padding:'34px 38px',marginBottom:'36px',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',right:'18px',bottom:'-14px',fontFamily:'var(--font-playfair),serif',fontSize:'90px',fontWeight:900,opacity:.07,pointerEvents:'none',color:C.gold,lineHeight:1,userSelect:'none'}}>γενική</div>
       {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'20px',fontWeight:700,color:C.gold,marginBottom:'12px'}}>{s.title}</h3>}
       <div style={{opacity:.9,lineHeight:1.8,fontSize:'16px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
   if(s.type==='theory')return(
-    <div style={{marginBottom:'32px'}}>
+    <div id={anchorId} style={{marginBottom:'32px'}}>
       {s.title&&<><SL text="Теория"/><h2 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3.5vw,34px)',fontWeight:900,lineHeight:1.15,marginBottom:'16px',color:C.text}}>{s.title}</h2></>}
       <div style={{fontSize:'17px',lineHeight:1.78,color:C.text}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
@@ -107,7 +116,7 @@ function Sec({s}){
     if(!data.length)return null
     const cols=Object.keys(data[0])
     return(
-      <div style={{marginBottom:'28px'}}>
+      <div id={anchorId} style={{marginBottom:'28px'}}>
         {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
         {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'10px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
         <div style={{overflowX:'auto',borderRadius:'12px',border:`1.5px solid ${C.border}`}}>
@@ -124,31 +133,31 @@ function Sec({s}){
     )
   }
   if(s.type==='verse')return(
-    <div style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'18px 0'}}>
+    <div id={anchorId} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'18px 0'}}>
       {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.muted,letterSpacing:'1px',textTransform:'uppercase',marginBottom:'10px'}}>{s.title}</div>}
       <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(17px,2.5vw,22px)',lineHeight:1.5,color:C.blue}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
   if(s.type==='highlight')return(
-    <div style={{borderLeft:`4px solid ${C.gold}`,background:'#fdf8ec',borderRadius:'0 10px 10px 0',padding:'16px 20px',margin:'20px 0',fontStyle:'italic',color:C.text}}>
+    <div id={anchorId} style={{borderLeft:`4px solid ${C.gold}`,background:'#fdf8ec',borderRadius:'0 10px 10px 0',padding:'16px 20px',margin:'20px 0',fontStyle:'italic',color:C.text}}>
       {s.title&&<strong style={{fontStyle:'normal',color:C.accent,display:'block',marginBottom:'6px'}}>{s.title}</strong>}
       <span dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
   if(s.type==='tip')return(
-    <div style={{background:'#e8f5e4',border:'1.5px solid #a3d49a',borderRadius:'10px',padding:'14px 18px',margin:'16px 0',fontSize:'15px',color:'#1a2e18'}}>
+    <div id={anchorId} style={{background:'#e8f5e4',border:'1.5px solid #a3d49a',borderRadius:'10px',padding:'14px 18px',margin:'16px 0',fontSize:'15px',color:'#1a2e18'}}>
       <strong>💡 {s.title?s.title+': ':''}</strong>
       <span dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
   if(s.type==='warning')return(
-    <div style={{background:'#fdeae0',border:'1.5px solid #e8a882',borderRadius:'10px',padding:'14px 18px',margin:'16px 0',fontSize:'15px',color:'#2e1208'}}>
+    <div id={anchorId} style={{background:'#fdeae0',border:'1.5px solid #e8a882',borderRadius:'10px',padding:'14px 18px',margin:'16px 0',fontSize:'15px',color:'#2e1208'}}>
       <strong>{s.title??'⚠️ Внимание'}:</strong>
       {s.content&&<span style={{marginLeft:'4px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
     </div>
   )
   if(s.type==='example')return(
-    <div style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'14px 0'}}>
+    <div id={anchorId} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'14px 0'}}>
       {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',color:C.muted,letterSpacing:'1px',textTransform:'uppercase',marginBottom:'8px'}}>{s.title}</div>}
       <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'22px',lineHeight:1.4,color:C.blue}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
@@ -296,12 +305,30 @@ function SelfCheck({items}){
   </div>
 }
 
+/* ═══ VOCAB CARD — fixed hover: only border glow, no background change ═══ */
 function VCard({w}){
   const [flip,setFlip]=useState(false)
   return <div onClick={()=>setFlip(p=>!p)} role="button"
-    style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'10px',padding:'14px 15px',cursor:'pointer',minHeight:'110px',display:'flex',flexDirection:'column',justifyContent:'space-between',transition:'border-color .2s,background .2s'}}
-    onMouseEnter={e=>{e.currentTarget.style.borderColor=C.gold;e.currentTarget.style.background='#fffbf0'}}
-    onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.background=C.card}}>
+    style={{
+      background:C.card,
+      border:`1.5px solid ${C.border}`,
+      borderRadius:'10px',
+      padding:'14px 15px',
+      cursor:'pointer',
+      minHeight:'110px',
+      display:'flex',
+      flexDirection:'column',
+      justifyContent:'space-between',
+      transition:'border-color .25s, box-shadow .25s',
+    }}
+    onMouseEnter={e=>{
+      e.currentTarget.style.borderColor=C.gold
+      e.currentTarget.style.boxShadow='0 0 12px rgba(200,146,42,.15)'
+    }}
+    onMouseLeave={e=>{
+      e.currentTarget.style.borderColor=C.border
+      e.currentTarget.style.boxShadow='none'
+    }}>
     {!flip?<>
       <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'20px',fontWeight:700,color:C.blue,marginBottom:'3px'}}>{w.greek}</div>
       <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.muted,marginBottom:'6px'}}>{w.transliteration}</div>
@@ -333,6 +360,27 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
   const sections=lesson.sections??[],vocab=lesson.vocab??[],exercises=lesson.exercises??[],summary=lesson.summary??[]
   const lessonNum=lesson.id?.split('-').pop()??'?'
 
+  /* ═══ Build dynamic navigation items from section titles ═══ */
+  const navItems = useMemo(() => {
+    const items = [{ href: '#lesson', label: 'Введение' }]
+
+    // Add titled theory/table sections
+    sections.forEach((s, i) => {
+      if (s.title && (s.type === 'theory' || s.type === 'table')) {
+        const anchor = sectionAnchor(s.title, i)
+        // Truncate long titles for nav
+        const label = s.title.length > 28 ? s.title.substring(0, 26) + '…' : s.title
+        items.push({ href: `#${anchor}`, label })
+      }
+    })
+
+    if (summary.length > 0) items.push({ href: '#summary', label: 'Итоги' })
+    if (vocab.length > 0) items.push({ href: '#vocab', label: `Словарь (${vocab.length})` })
+    if (exercises.length > 0) items.push({ href: '#homework', label: '📝 Задания' })
+
+    return items
+  }, [sections, vocab, exercises, summary])
+
   async function handleComplete(){
     setSaving(true)
     try{await fetch('/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lessonId:lesson.id,completed:true})});setCompleted(true)}catch{}finally{setSaving(false)}
@@ -344,34 +392,53 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     {/* ── ШАПКА тёмная ─────────────────────────────────────────── */}
     <header style={{background:C.ink,color:'#f7f2e8',padding:'60px 40px 50px',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',right:'-20px',top:'50%',transform:'translateY(-50%)',fontFamily:'var(--font-playfair),serif',fontSize:'140px',fontWeight:900,opacity:.06,letterSpacing:'-4px',pointerEvents:'none',whiteSpace:'nowrap',color:'#f7f2e8',userSelect:'none'}}>ΕΛΛΗΝΙΚΑ</div>
-      <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'12px',letterSpacing:'4px',textTransform:'uppercase',color:C.gold,marginBottom:'16px'}}>{mod?.title??`Модуль ${lesson.moduleId}`} · Глава {lessonNum}</div>
-      <h1 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(32px,6vw,64px)',fontWeight:900,lineHeight:1.05,marginBottom:'14px',color:'#f7f2e8'}}>{lesson.title}</h1>
-      <p style={{fontSize:'18px',opacity:.7,fontStyle:'italic',maxWidth:'560px',marginBottom:'28px'}}>{lesson.subtitle}</p>
-      <div style={{display:'flex',gap:'12px',flexWrap:'wrap'}}>
-        {[`⏱ ${lesson.duration??'~40 мин'}`,vocab.length>0?`📚 ${vocab.length} слов`:null,exercises.length>0?`✍️ ${exercises.length} заданий`:null,completed?'✓ Пройден':null].filter(Boolean).map((chip,i)=>(
-          <span key={i} style={{background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.15)',borderRadius:'30px',padding:'5px 15px',fontSize:'13px',fontFamily:'var(--font-jetbrains),monospace',color:chip.startsWith('✓')?'#a0ffb0':'inherit'}}>{chip}</span>
-        ))}
+      <div style={{maxWidth:'900px',margin:'0 auto'}}>
+        <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'12px',letterSpacing:'4px',textTransform:'uppercase',color:C.gold,marginBottom:'16px'}}>{mod?.title??`Модуль ${lesson.moduleId}`} · Глава {lessonNum}</div>
+        <h1 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(32px,6vw,64px)',fontWeight:900,lineHeight:1.05,marginBottom:'14px',color:'#f7f2e8'}}>{lesson.title}</h1>
+        <p style={{fontSize:'18px',opacity:.7,fontStyle:'italic',maxWidth:'560px',marginBottom:'28px'}}>{lesson.subtitle}</p>
+        <div style={{display:'flex',gap:'12px',flexWrap:'wrap'}}>
+          {[`⏱ ${lesson.duration??'~40 мин'}`,vocab.length>0?`📚 ${vocab.length} слов`:null,exercises.length>0?`✍️ ${exercises.length} заданий`:null,completed?'✓ Пройден':null].filter(Boolean).map((chip,i)=>(
+            <span key={i} style={{background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.15)',borderRadius:'30px',padding:'5px 15px',fontSize:'13px',fontFamily:'var(--font-jetbrains),monospace',color:chip.startsWith('✓')?'#a0ffb0':'inherit'}}>{chip}</span>
+          ))}
+        </div>
       </div>
     </header>
 
-    {/* ── НАВИГАЦИЯ тёмная ─────────────────────────────────────── */}
-    <nav style={{background:C.ink,borderTop:'1px solid rgba(255,255,255,.08)',padding:'0 32px',display:'flex',overflowX:'auto',scrollbarWidth:'none'}}>
-      {[{href:'#lesson',label:'Введение'},{href:'#vocab',label:`Словарь${vocab.length>0?` (${vocab.length})`:''}`},{href:'#homework',label:'📝 Задания',show:exercises.length>0}].filter(x=>x.show!==false).map((item,i)=>(
-        <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s'}}
-          onMouseEnter={e=>{e.currentTarget.style.color=C.gold;e.currentTarget.style.borderBottomColor=C.gold}}
-          onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,.45)';e.currentTarget.style.borderBottomColor='transparent'}}>
-          {item.label}
-        </a>
-      ))}
+    {/* ── НАВИГАЦИЯ — sticky, with dynamic section links ─────── */}
+    <nav style={{
+      background:C.ink,
+      borderTop:'1px solid rgba(255,255,255,.08)',
+      padding:'0 32px',
+      display:'flex',
+      overflowX:'auto',
+      scrollbarWidth:'none',
+      position:'sticky',
+      top:0,
+      zIndex:20,
+      backdropFilter:'blur(10px)',
+    }}>
+      <div style={{display:'flex',maxWidth:'900px',margin:'0 auto',width:'100%'}}>
+        {navItems.map((item,i)=>(
+          <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s'}}
+            onMouseEnter={e=>{e.currentTarget.style.color=C.gold;e.currentTarget.style.borderBottomColor=C.gold}}
+            onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,.45)';e.currentTarget.style.borderBottomColor='transparent'}}>
+            {item.label}
+          </a>
+        ))}
+      </div>
     </nav>
 
     {/* ── КОНТЕНТ пергаментный ────────────────────────────────── */}
     <main id="lesson" style={{maxWidth:'900px',margin:'0 auto',padding:'60px 24px 100px'}}>
 
-      {sections.map((s,i)=><div key={i}><Sec s={s}/></div>)}
+      {sections.map((s,i)=>{
+        const anchor = (s.title && (s.type === 'theory' || s.type === 'table'))
+          ? sectionAnchor(s.title, i) : undefined
+        return <div key={i}><Sec s={s} anchorId={anchor}/></div>
+      })}
 
       {summary.length>0&&<>{DIV}
-        <section>
+        <section id="summary">
           <SL text="Итоги урока"/>
           <h2 style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,4vw,34px)',fontWeight:900,lineHeight:1.15,marginBottom:'20px',color:C.text}}>Что вы узнали</h2>
           <ul style={{listStyle:'none',padding:0,margin:'20px 0'}}>
