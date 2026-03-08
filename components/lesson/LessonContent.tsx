@@ -139,7 +139,7 @@ function Sec({s, anchorId}){
     </div>
   )
   if(s.type==='highlight')return(
-    <div id={anchorId} style={{borderLeft:`4px solid ${C.gold}`,background:'#fdf8ec',borderRadius:'0 10px 10px 0',padding:'16px 20px',margin:'20px 0',fontStyle:'italic',color:C.text}}>
+    <div id={anchorId} style={{borderLeft:`4px solid ${C.gold}`,background:'#fdf8ec',borderRadius:'0 10px 10px 0',padding:'16px 20px',margin:'20px 0',fontStyle:'italic',color:'#4a3f2f'}}>
       {s.title&&<strong style={{fontStyle:'normal',color:C.accent,display:'block',marginBottom:'6px'}}>{s.title}</strong>}
       <span dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
@@ -417,15 +417,13 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
       zIndex:20,
       backdropFilter:'blur(10px)',
     }}>
-      <div style={{display:'flex',maxWidth:'900px',margin:'0 auto',width:'100%'}}>
-        {navItems.map((item,i)=>(
+      {navItems.map((item,i)=>(
           <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s'}}
             onMouseEnter={e=>{e.currentTarget.style.color=C.gold;e.currentTarget.style.borderBottomColor=C.gold}}
             onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,.45)';e.currentTarget.style.borderBottomColor='transparent'}}>
             {item.label}
           </a>
         ))}
-      </div>
     </nav>
 
     {/* ── КОНТЕНТ пергаментный ────────────────────────────────── */}
