@@ -99,7 +99,7 @@ function Sec({s, anchorId}){
     return null
   }
   if(s.type==='intro')return(
-    <div id={anchorId} style={{background:C.ink,color:'#f7f2e8',borderRadius:'16px',padding:'34px 38px',marginBottom:'36px',position:'relative',overflow:'hidden'}}>
+    <div id={anchorId} style={{background:C.ink,color:'#f7f2e8',borderRadius:'16px',padding:'clamp(24px,4vw,34px) clamp(20px,4vw,38px)',marginBottom:'36px',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',right:'18px',bottom:'-14px',fontFamily:'var(--font-playfair),serif',fontSize:'90px',fontWeight:900,opacity:.07,pointerEvents:'none',color:C.gold,lineHeight:1,userSelect:'none'}}>γενική</div>
       {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'20px',fontWeight:700,color:C.gold,marginBottom:'12px'}}>{s.title}</h3>}
       <div style={{opacity:.9,lineHeight:1.8,fontSize:'16px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
@@ -390,7 +390,7 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     <PBar/>
 
     {/* ── ШАПКА тёмная ─────────────────────────────────────────── */}
-    <header style={{background:C.ink,color:'#f7f2e8',padding:'60px 40px 50px',position:'relative',overflow:'hidden'}}>
+    <header style={{background:C.ink,color:'#f7f2e8',padding:'clamp(36px,5vw,60px) clamp(18px,4vw,40px) clamp(32px,4vw,50px)',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',right:'-20px',top:'50%',transform:'translateY(-50%)',fontFamily:'var(--font-playfair),serif',fontSize:'140px',fontWeight:900,opacity:.06,letterSpacing:'-4px',pointerEvents:'none',whiteSpace:'nowrap',color:'#f7f2e8',userSelect:'none'}}>ΕΛΛΗΝΙΚΑ</div>
       <div style={{maxWidth:'900px',margin:'0 auto'}}>
         <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'12px',letterSpacing:'4px',textTransform:'uppercase',color:C.gold,marginBottom:'16px'}}>{mod?.title??`Модуль ${lesson.moduleId}`} · Глава {lessonNum}</div>
@@ -408,7 +408,7 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     <nav style={{
       background:C.ink,
       borderTop:'1px solid rgba(255,255,255,.08)',
-      padding:'0 32px',
+      padding:'0 clamp(14px,3vw,32px)',
       display:'flex',
       overflowX:'auto',
       scrollbarWidth:'none',
@@ -429,7 +429,7 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     </nav>
 
     {/* ── КОНТЕНТ пергаментный ────────────────────────────────── */}
-    <main id="lesson" style={{maxWidth:'900px',margin:'0 auto',padding:'60px 24px 100px'}}>
+    <main id="lesson" style={{maxWidth:'900px',margin:'0 auto',padding:'clamp(36px,5vw,60px) clamp(14px,3vw,24px) 100px'}}>
 
       {sections.map((s,i)=>{
         const anchor = (s.title && (s.type === 'theory' || s.type === 'table'))
@@ -463,7 +463,7 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
 
       {exercises.length>0&&<>{DIV}
         <section id="homework">
-          <div style={{background:C.ink,color:'#f7f2e8',borderRadius:'20px',padding:'44px 40px',position:'relative',overflow:'hidden'}}>
+          <div style={{background:C.ink,color:'#f7f2e8',borderRadius:'20px',padding:'clamp(28px,4vw,44px) clamp(18px,3vw,40px)',position:'relative',overflow:'hidden'}}>
             <div style={{position:'absolute',right:'-10px',top:'18px',fontFamily:'var(--font-playfair),serif',fontSize:'96px',fontWeight:900,opacity:.04,pointerEvents:'none',whiteSpace:'nowrap',color:'#f7f2e8',userSelect:'none'}}>Άσκηση</div>
             <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'30px',fontWeight:900,color:C.gold,marginBottom:'6px'}}>Домашнее задание</div>
             <div style={{opacity:.6,fontStyle:'italic',marginBottom:'30px',fontSize:'16px'}}>Упражнение {lessonNum} · {lesson.title}</div>

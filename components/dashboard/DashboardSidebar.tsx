@@ -32,7 +32,7 @@ export function DashboardSidebar({ profile }: { profile: Profile | null }) {
   const name = profile?.full_name || profile?.email || 'Студент'
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-[260px] bg-deep border-r border-rim flex flex-col z-40">
+    <aside className="dashboard-sidebar-desktop fixed left-0 top-0 h-full w-[260px] bg-deep border-r border-rim flex flex-col z-40">
 
       {/* Logo */}
       <div className="px-5 py-5 border-b border-rim">
