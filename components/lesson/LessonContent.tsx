@@ -386,7 +386,7 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     try{await fetch('/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lessonId:lesson.id,completed:true})});setCompleted(true)}catch{}finally{setSaving(false)}
   }
 
-  return <div style={{background:C.bg,minHeight:'100vh',fontFamily:'var(--font-source-serif),Georgia,serif',fontSize:'17px',lineHeight:1.75,color:C.text}}>
+  return <div style={{background:C.bg,minHeight:'100vh',fontFamily:'var(--font-source-serif),Georgia,serif',fontSize:'17px',lineHeight:1.75,color:C.text,overflowX:'hidden'}}>
     <PBar/>
 
     {/* ── ШАПКА тёмная ─────────────────────────────────────────── */}
@@ -403,28 +403,33 @@ export function LessonContent({lesson,module:mod,userId,prev,next,isCompleted}){
     </header>
 
     {/* ── НАВИГАЦИЯ — sticky, with dynamic section links ─────── */}
-    <nav className="lesson-nav-scroll" style={{
+    {/* ── НАВИГАЦИЯ — sticky, горизонтальный скролл внутри ──── */}
+    <div style={{
       background:C.ink,
       borderTop:'1px solid rgba(255,255,255,.08)',
-      padding:'0 clamp(14px,3vw,32px)',
-      display:'flex',
-      overflowX:'auto',
-      overflowY:'hidden',
-      scrollbarWidth:'none',
       position:'sticky',
       top:0,
       zIndex:20,
-      backdropFilter:'blur(10px)',
-      WebkitOverflowScrolling:'touch',
+      width:'100%',
+      maxWidth:'100vw',
     }}>
-      {navItems.map((item,i)=>(
-          <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s',flexShrink:0}}
-            onMouseEnter={e=>{e.currentTarget.style.color=C.gold;e.currentTarget.style.borderBottomColor=C.gold}}
-            onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,.45)';e.currentTarget.style.borderBottomColor='transparent'}}>
-            {item.label}
-          </a>
-        ))}
-    </nav>
+      <nav className="lesson-nav-scroll" style={{
+        display:'flex',
+        overflowX:'scroll',
+        overflowY:'hidden',
+        scrollbarWidth:'none',
+        padding:'0 clamp(14px,3vw,32px)',
+        WebkitOverflowScrolling:'touch',
+      }}>
+        {navItems.map((item,i)=>(
+            <a key={i} href={item.href} style={{padding:'13px 16px',fontSize:'12px',fontFamily:'var(--font-jetbrains),monospace',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap',borderBottom:'2px solid transparent',textDecoration:'none',display:'block',transition:'all .2s',flexShrink:0}}
+              onMouseEnter={e=>{e.currentTarget.style.color=C.gold;e.currentTarget.style.borderBottomColor=C.gold}}
+              onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,.45)';e.currentTarget.style.borderBottomColor='transparent'}}>
+              {item.label}
+            </a>
+          ))}
+      </nav>
+    </div>
 
     {/* ── КОНТЕНТ пергаментный ────────────────────────────────── */}
     <main id="lesson" style={{maxWidth:'900px',margin:'0 auto',padding:'clamp(36px,5vw,60px) clamp(14px,3vw,24px) 100px'}}>
