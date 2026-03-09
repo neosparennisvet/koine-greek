@@ -299,6 +299,54 @@ function Sec({s, anchorId}){
     )
   }
 
+  /* ── PREPTABLE — preposition table (no case-row coloring, plain text cells) ── */
+  if(s.type==='preptable'){
+    const cols = s.cols ?? []
+    const rows = s.rows ?? []
+    // accent color per column index
+    const colColors = ['#2a7fd4','#0ea5a0','#7c4dff','#c0392b','#c8922a']
+    return(
+      <div id={anchorId} style={{marginBottom:'28px'}}>
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'10px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <div style={{overflowX:'auto',borderRadius:'12px',border:`1.5px solid ${C.border}`,marginBottom:'8px'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'15px',background:C.card,minWidth:'400px'}}>
+            <thead>
+              <tr style={{background:C.ink}}>
+                {cols.map((col,i)=>(
+                  <th key={i} style={{padding:'12px 14px',textAlign:i===0?'left':'center',fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',color:col.color??colColors[i]??C.gold,fontWeight:600,minWidth:i===0?'90px':'auto'}}>{col.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row,ri)=>{
+                const rowBg = ri%2===0?C.card:C.soft
+                return(
+                  <tr key={ri} style={{background:rowBg,borderBottom:`1px solid ${C.border}`,borderLeft:`3px solid ${row.color??'transparent'}`}}>
+                    {row.cells.map((cell,ci)=>{
+                      const isFirst = ci===0
+                      const cellColor = isFirst?(row.color??colColors[0]):C.text
+                      return(
+                        <td key={ci} style={{padding:'12px 14px',textAlign:isFirst?'left':'center',verticalAlign:'middle'}}>
+                          {isFirst?(
+                            <span style={{fontFamily:'var(--font-playfair),serif',fontSize:'22px',fontWeight:900,color:cellColor,letterSpacing:'1px'}}>{cell}</span>
+                          ):(
+                            <span style={{fontSize:'14px',color:cellColor,lineHeight:1.5}} dangerouslySetInnerHTML={{__html:md(String(cell??'—'))}}/>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+        {s.hint&&<div style={{fontSize:'13px',color:C.muted,padding:'8px 12px',background:C.soft,borderRadius:'8px',lineHeight:1.6}} dangerouslySetInnerHTML={{__html:'💡 '+md(s.hint)}}/>}
+      </div>
+    )
+  }
+
   /* ── EXEGESIS — dark theological insight card ── */
   if(s.type==='exegesis')return(
     <div id={anchorId} style={{background:C.blue,color:'white',borderRadius:'16px',padding:'clamp(28px,4vw,40px) clamp(20px,4vw,40px)',margin:'32px 0',position:'relative',overflow:'hidden'}}>
