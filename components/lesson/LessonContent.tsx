@@ -134,7 +134,7 @@ function Sec({s, anchorId}){
   }
   if(s.type==='verse')return(
     <div id={anchorId} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'18px 0'}}>
-      {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.muted,letterSpacing:'1px',textTransform:'uppercase',marginBottom:'10px'}}>{s.title}</div>}
+      {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'11px',color:C.accent,letterSpacing:'0.5px',borderBottom:`1px solid ${C.border}`,paddingBottom:'8px',marginBottom:'12px'}}>{s.title}</div>}
       <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(17px,2.5vw,22px)',lineHeight:1.5,color:C.blue}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
@@ -172,15 +172,15 @@ function Sec({s, anchorId}){
       <div id={anchorId} style={{marginBottom:'28px'}}>
         {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
         {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'16px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:'16px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:'16px'}}>
           {words.map((w,i)=>{
             const ec = caseColor(w.case)
             return(
-              <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'20px 16px 16px',textAlign:'center',display:'flex',flexDirection:'column',gap:'12px'}}>
+              <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'20px 16px 16px',textAlign:'center',display:'flex',flexDirection:'column',gap:'12px',minWidth:0}}>
                 {/* label */}
                 <div style={{fontSize:'10px',color:C.muted,fontFamily:'var(--font-jetbrains),monospace',letterSpacing:'1px',textTransform:'uppercase',lineHeight:1.5}}>{w.label}</div>
                 {/* word display */}
-                <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(34px,6vw,52px)',fontWeight:900,letterSpacing:'2px',display:'flex',justifyContent:'center',lineHeight:1.15,padding:'4px 0'}}>
+                <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(24px,4vw,40px)',fontWeight:900,letterSpacing:'1px',display:'flex',justifyContent:'center',flexWrap:'wrap',lineHeight:1.2,padding:'4px 0',wordBreak:'break-word',overflow:'hidden'}}>
                   <span style={{color:C.blue}}>{w.stem}</span>
                   <span style={{color:ec,fontWeight:900}}>{w.ending}</span>
                 </div>
@@ -295,6 +295,44 @@ function Sec({s, anchorId}){
           ]))}
         </div>
         {s.hint&&<div style={{fontSize:'13px',color:C.muted,padding:'8px 12px',background:C.soft,borderRadius:'8px',lineHeight:1.6}} dangerouslySetInnerHTML={{__html:'💡 '+md(s.hint)}}/>}
+      </div>
+    )
+  }
+
+  /* ── POSITIONS — adjective position visualizer (attributive/predicative/substantive) ── */
+  if(s.type==='positions'){
+    const items = s.items ?? []
+    return(
+      <div id={anchorId} style={{marginBottom:'28px'}}>
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'16px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'16px'}}>
+          {items.map((item,i)=>(
+            <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'18px 20px',display:'flex',flexDirection:'column',gap:'10px'}}>
+              {/* position label */}
+              <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1.5px',textTransform:'uppercase',color:C.muted}}>{item.label}</div>
+              {/* Greek phrase — each token coloured */}
+              <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3vw,32px)',fontWeight:900,lineHeight:1.3,display:'flex',flexWrap:'wrap',gap:'6px',alignItems:'baseline'}}>
+                {(item.tokens??[]).map((tok,ti)=>(
+                  <span key={ti} style={{color:tok.color??C.text,whiteSpace:'nowrap'}}>{tok.text}</span>
+                ))}
+              </div>
+              {/* divider */}
+              <div style={{height:'1px',background:C.border}}/>
+              {/* legend dots */}
+              <div style={{display:'flex',flexDirection:'column',gap:'4px'}}>
+                {(item.legend??[]).map((leg,li)=>(
+                  <span key={li} style={{display:'inline-flex',alignItems:'center',gap:'7px',fontSize:'12px',color:C.text}}>
+                    <span style={{width:'9px',height:'9px',borderRadius:'50%',background:leg.color,flexShrink:0,display:'inline-block'}}/>
+                    <span>{leg.text}</span>
+                  </span>
+                ))}
+              </div>
+              {/* translation */}
+              {item.translation&&<div style={{fontSize:'13px',color:C.muted,fontStyle:'italic',borderTop:`1px solid ${C.border}`,paddingTop:'8px'}}>{item.translation}</div>}
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
