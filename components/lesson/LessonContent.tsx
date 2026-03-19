@@ -158,7 +158,7 @@ function Sec({s, anchorId}){
   )
   if(s.type==='example')return(
     <div id={anchorId} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'12px',padding:'20px 24px',margin:'14px 0'}}>
-      {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',color:C.muted,letterSpacing:'1px',textTransform:'uppercase',marginBottom:'8px'}}>{s.title}</div>}
+      {s.title&&<div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',color:C.muted,letterSpacing:'1px',marginBottom:'8px'}}>{s.title}</div>}
       <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'22px',lineHeight:1.4,color:C.blue}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>
     </div>
   )
@@ -178,7 +178,7 @@ function Sec({s, anchorId}){
             return(
               <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'20px 16px 16px',textAlign:'center',display:'flex',flexDirection:'column',gap:'12px',minWidth:0}}>
                 {/* label */}
-                <div style={{fontSize:'10px',color:C.muted,fontFamily:'var(--font-jetbrains),monospace',letterSpacing:'1px',textTransform:'uppercase',lineHeight:1.5}}>{w.label}</div>
+                <div style={{fontSize:'10px',color:C.muted,fontFamily:'var(--font-jetbrains),monospace',letterSpacing:'1px',lineHeight:1.5}}>{w.label}</div>
                 {/* word display */}
                 <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(24px,4vw,40px)',fontWeight:900,letterSpacing:'1px',display:'flex',justifyContent:'center',flexWrap:'wrap',lineHeight:1.2,padding:'4px 0',wordBreak:'break-word',overflow:'hidden'}}>
                   <span style={{color:C.blue}}>{w.stem}</span>
@@ -310,7 +310,7 @@ function Sec({s, anchorId}){
           {items.map((item,i)=>(
             <div key={i} style={{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:'14px',padding:'18px 20px',display:'flex',flexDirection:'column',gap:'10px'}}>
               {/* position label */}
-              <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1.5px',textTransform:'uppercase',color:C.muted}}>{item.label}</div>
+              <div style={{fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1.5px',color:C.muted}}>{item.label}</div>
               {/* Greek phrase — each token coloured */}
               <div style={{fontFamily:'var(--font-playfair),serif',fontSize:'clamp(22px,3vw,32px)',fontWeight:900,lineHeight:1.3,display:'flex',flexWrap:'wrap',gap:'6px',alignItems:'baseline'}}>
                 {(item.tokens??[]).map((tok,ti)=>(
