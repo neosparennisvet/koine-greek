@@ -448,6 +448,59 @@ function Sec({s, anchorId}){
     )
   }
 
+  /* ── CONTRACTIONGRID — interactive vowel contraction table ── */
+  if(s.type==='contractiongrid'){
+    const rows = s.rows ?? []
+    const cols = s.cols ?? []
+    const cellData = s.cellData ?? {}
+    const [active,setActive]=useState(null)
+    const activeInfo = active ? cellData[active] : null
+    return(
+      <div id={anchorId} style={{marginBottom:'28px'}}>
+        {s.title&&<h3 style={{fontFamily:'var(--font-playfair),serif',fontSize:'19px',fontWeight:700,color:C.blue,marginBottom:'8px'}}>{s.title}</h3>}
+        {s.content&&<p style={{color:C.muted,fontSize:'15px',marginBottom:'12px'}} dangerouslySetInnerHTML={{__html:md(s.content)}}/>}
+        <div style={{overflowX:'auto',borderRadius:'12px',border:`1.5px solid ${C.border}`,marginBottom:activeInfo?'0':'8px'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',background:C.card,minWidth:'400px'}}>
+            <thead>
+              <tr style={{background:C.ink}}>
+                <th style={{padding:'12px 14px',textAlign:'center',width:'60px'}}></th>
+                {cols.map((col,i)=>(
+                  <th key={i} style={{padding:'12px 14px',textAlign:'center',fontFamily:'var(--font-playfair),serif',fontSize:'18px',fontWeight:700,color:C.gold}}>{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row,ri)=>(
+                <tr key={ri} style={{borderBottom:`1px solid ${C.border}`}}>
+                  <td style={{padding:'12px 14px',textAlign:'center',fontFamily:'var(--font-playfair),serif',fontSize:'18px',fontWeight:700,color:C.gold,background:'rgba(200,146,42,0.06)',borderRight:`2px solid ${C.gold}`}}>{row.label}</td>
+                  {cols.map((col,ci)=>{
+                    const key = row.label+'+'+col
+                    const val = (row.cells??[])[ci] ?? '—'
+                    const isActive = active===key
+                    return(
+                      <td key={ci}
+                        onClick={()=>setActive(isActive?null:key)}
+                        style={{padding:'12px 14px',textAlign:'center',fontFamily:'var(--font-playfair),serif',fontSize:'18px',color:C.text,cursor:cellData[key]?'pointer':'default',background:isActive?'rgba(200,146,42,0.12)':ri%2===0?'transparent':'rgba(255,255,255,0.02)',transition:'background .15s',borderRadius:isActive?'4px':'0',outline:isActive?`2px solid ${C.gold}`:'none',outlineOffset:'-2px'}}>
+                        {val}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {activeInfo&&(
+          <div style={{background:'rgba(200,146,42,0.08)',border:`1.5px solid rgba(200,146,42,0.3)`,borderRadius:'0 0 12px 12px',padding:'14px 18px',marginTop:'-2px',fontSize:'14px',lineHeight:1.7,color:C.text,display:'flex',gap:'12px',alignItems:'flex-start',flexWrap:'wrap'}}>
+            <span style={{flexShrink:0,background:C.gold,color:C.ink,borderRadius:'6px',padding:'2px 10px',fontFamily:'var(--font-playfair),serif',fontSize:'16px',fontWeight:700}}>{active?.replace('+', ' + ')}</span>
+            <span style={{flex:1}} dangerouslySetInnerHTML={{__html:md(activeInfo)}}/>
+            <button onClick={()=>setActive(null)} style={{flexShrink:0,background:'none',border:`1px solid rgba(255,255,255,.2)`,color:'rgba(255,255,255,.4)',borderRadius:'6px',padding:'2px 8px',fontSize:'11px',cursor:'pointer',fontFamily:'var(--font-jetbrains),monospace'}}>✕</button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return null
 }
 
