@@ -454,11 +454,12 @@ function Sec({s, anchorId}){
 function AnalysisEx({ex}){
   const words=ex.words??[],answers=ex.answers??[]
   const [rev,setRev]=useState({})
+  const headers=ex.headers??['#','Форма','Падеж','Число','Род','Лекс. форма','Значение']
   return <div>
     <p style={{fontSize:'13px',color:'rgba(255,255,255,.4)',fontStyle:'italic',marginBottom:'12px',fontFamily:'var(--font-jetbrains),monospace'}}>Нажмите на строку чтобы открыть ответ</p>
     <div style={{overflowX:'auto'}}>
       <table style={{width:'100%',borderCollapse:'collapse',fontSize:'13px',minWidth:'520px'}}>
-        <thead><tr>{['#','Форма','Падеж','Число','Род','Лекс. форма','Значение'].map((h,i)=><th key={i} style={{padding:'9px 10px',background:'rgba(255,255,255,.1)',color:C.gold,fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',textAlign:i>1?'center':'left',borderBottom:'1px solid rgba(255,255,255,.1)'}}>{h}</th>)}</tr></thead>
+        <thead><tr>{headers.map((h,i)=><th key={i} style={{padding:'9px 10px',background:'rgba(255,255,255,.1)',color:C.gold,fontFamily:'var(--font-jetbrains),monospace',fontSize:'10px',letterSpacing:'1px',textAlign:i>1?'center':'left',borderBottom:'1px solid rgba(255,255,255,.1)'}}>{h}</th>)}</tr></thead>
         <tbody>{words.map((word,i)=>{
           const a=answers[i]??{},isR=rev[i]
           return <tr key={i} onClick={()=>setRev(p=>({...p,[i]:!p[i]}))} style={{cursor:'pointer',borderBottom:'1px solid rgba(255,255,255,.06)',background:isR?'rgba(200,146,42,.08)':i%2===0?'transparent':'rgba(255,255,255,.02)',transition:'background .15s'}}>
